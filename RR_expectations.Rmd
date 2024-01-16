@@ -1,0 +1,38 @@
+---
+title: "Research Rotation Expectations"
+author: "Dr. Lukas Weber & Lauren Rusnak"
+date: 2023-12-15
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+___________________________________________________________
+
+
+## **Evaluation of spatially-aware clustering algorithms for spatial transcriptomics data**
+
+### Background and goals
+
+Recently developed spatial transcriptomics platforms enable the measurement of transcriptome-scale gene expression at spatial resolution within tissue samples. These platforms have become widely applied for the characterization of spatially distributed cell populations and cell states (spatial domains) and spatial patterns of gene expression (spatially variable genes). Currently, the most widely used spatial transcriptomics platform is the 10 Genomics Visium platform, which typically provides a spatial resolution of around 1-10 cells per measurement location (spot) in human tissue, or around 10-50 cells per spot in mouse tissue. Several newer platforms provide higher spatial resolution, including single-cell or sub-cellular resolution. While data generation with these technologies has proceeded rapidly, significant bottlenecks remain in the development of statistical and computational analysis methods and workflows. In this project, we will evaluate the performance of new and existing methods for spatially-aware unsupervised clustering that can be used to identify spatial domains within tissue samples. Key steps will include familiarizing with the existing literature, identifying suitable datasets and evaluation metrics, running clustering workflows using new and existing clustering methods in R, publishing code to GitHub, generating evaluation plots in R, and writing up results.
+
+
+### Summary of key steps
+
+  * Familiarize with literature on spatial transcriptomics and spatially-aware clustering
+  * Run example R analysis workflows for spatial transcriptomics data to familiarize with these workflows
+  * Identify datasets for evaluations, e.g. 10x Genomics Visium (spot-based platform) and/or Vizgen MERSCOPE / 10x Genomics Xenium (single-cell or higher resolution molecule-based platforms)
+  * Identify suitable evaluation metrics for spatially-aware clustering performance. For example, Adjusted Rand Index may be used when external reference labels are available. However, alternative metrics such as “cluster purity” may be more meaningful for some types of evaluations. Identifying the most biologically meaningful and interpretable evaluation metrics will be a crucial choice for successfully evaluating these methods.
+  * Set up GitHub repository to publish code. Ideally, this repository should be set up early during the project so that code can be continuously updated.
+  * Develop workflow to evaluate the performance of different clustering algorithms. In particular, we are interested in how the performance of a new spatially-aware clustering algorithm under development compares to existing state-of-the-art methods and baseline methods.
+  * Possibly create additional simulated datasets for further evaluations, if needed
+  * Generate evaluation plots using R tools (e.g. ggplot2)
+  * Write up results
+
+
+### Expected outcomes
+
+This project will provide training on spatial transcriptomics analyses and methods, unsupervised clustering methods, statistical / computational method evaluation, R workflows, GitHub, ggplot2, and written communication of results. The project will contribute towards evaluations for a new spatially-aware clustering algorithm currently under development (https://github.com/lmweber/smoothclust). Depending on the success of both the algorithm and the evaluation workflow, the results of this project may be used within a co-authored manuscript describing the new algorithm and its performance. (However, please note that it is difficult to anticipate the success of new methods developed during methodological research, so we cannot guarantee a manuscript.)
+
