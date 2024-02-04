@@ -21,7 +21,7 @@ library(scater)
 library(smoothclust)
 library(stats)
 library(mclust)
-library(dplyr)
+library(randnet)
 ```
 
 
@@ -157,6 +157,16 @@ ARI_uni_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_uni_km.clus7
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+NMI_uni_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7)
+NMI_uni_km.clus7
+```
+
+
+
+
 
 
 ##### K-means clustering with 8 centers
@@ -218,6 +228,16 @@ ARI_uni_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_uni_km.clus8
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_uni_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_uni_km.clus8
+```
+
+
+
 
 ##### K-means clustering with 10 centers
 ```{r}
@@ -278,6 +298,15 @@ ARI_uni_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_uni_km.clus10
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_uni_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_uni_km.clus10 
+```
+
+
 
 ##### Graph-based clustering
 ```{r}
@@ -336,6 +365,17 @@ ARI_uni_graph
 ```
 
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_uni_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_uni_graph
+```
+
+
+
+
 ##### SUMMARY
 
 ```{r}
@@ -361,6 +401,16 @@ ARIs_uni_df
 ```
 
 
+```{r}
+## NMI
+NMIs_uni <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', NMI_uni_km.clus7, NMI_uni_km.clus8, NMI_uni_km.clus10, NMI_uni_graph), ncol=2, byrow=F)
+
+colnames(NMIs_uni) <- c('Clustering Method', 'Uniform')
+
+NMIs_uni_df <- as.data.frame(NMIs_uni)
+
+NMIs_uni_df
+```
 
 
 _________________________________________________________________________
@@ -460,6 +510,14 @@ ARI_kern.02_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.02_km.clus7
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.02_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.02_km.clus7
+```
+
 
 
 ##### K-means clustering with 8 centers
@@ -521,6 +579,15 @@ ARI_kern.02_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.02_km.clus8
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.02_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.02_km.clus8
+```
+
+
 
 ##### K-means clustering with 10 centers
 ```{r}
@@ -581,6 +648,15 @@ ARI_kern.02_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.02_km.clus10
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.02_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.02_km.clus10
+```
+
+
 
 ##### Graph-based clustering
 ```{r}
@@ -638,6 +714,13 @@ ARI_kern.02_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$l
 ARI_kern.02_graph
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.02_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.02_graph
+```
 
 
 ##### SUMMARY
@@ -663,6 +746,19 @@ ARIs_kern.02_df <- as.data.frame(ARIs_kern.02)
 
 ARIs_kern.02_df
 ```
+
+```{r}
+## NMI
+NMIs_kern.02 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', NMI_kern.02_km.clus7, NMI_kern.02_km.clus8, NMI_kern.02_km.clus10, NMI_kern.02_graph), ncol=2, byrow=F)
+
+colnames(NMIs_kern.02) <- c('Clustering Method','Kernel, 0.02')
+
+NMIs_kern.02_df <- as.data.frame(NMIs_kern.02)
+
+NMIs_kern.02_df
+```
+
+
 
 
 _______________________________________________________________________
@@ -779,6 +875,15 @@ ARI_kern.04_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.04_km.clus7
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.04_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.04_km.clus7
+```
+
+
 
 
 ##### K-means clustering with 8 centers
@@ -840,6 +945,16 @@ ARI_kern.04_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.04_km.clus8
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.04_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.04_km.clus8
+```
+
+
+
 
 ##### K-means clustering with 10 centers
 ```{r}
@@ -900,6 +1015,16 @@ ARI_kern.04_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.04_km.clus10
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.04_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.04_km.clus10
+```
+
+
+
 
 ##### Graph-based clustering
 ```{r}
@@ -957,6 +1082,14 @@ ARI_kern.04_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$l
 ARI_kern.04_graph
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.04_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.04_graph
+```
+
 
 ##### SUMMARY
 
@@ -980,6 +1113,18 @@ colnames(ARIs_kern.04) <- c('Clustering Method','Kernel, 0.04')
 ARIs_kern.04_df <- as.data.frame(ARIs_kern.04)
 
 ARIs_kern.04_df
+```
+
+
+```{r}
+## NMI
+NMIs_kern.04 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', NMI_kern.04_km.clus7, NMI_kern.04_km.clus8, NMI_kern.04_km.clus10, NMI_kern.04_graph), ncol=2, byrow=F)
+
+colnames(NMIs_kern.04) <- c('Clustering Method','Kernel, 0.04')
+
+NMIs_kern.04_df <- as.data.frame(NMIs_kern.04)
+
+NMIs_kern.04_df
 ```
 
 
@@ -1079,6 +1224,14 @@ ARI_kern.05_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.05_km.clus7
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.05_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.05_km.clus7
+```
+
 
 
 ##### K-means clustering with 8 centers
@@ -1140,6 +1293,16 @@ ARI_kern.05_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.05_km.clus8
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.05_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.05_km.clus8
+```
+
+
+
 
 ##### K-means clustering with 10 centers
 ```{r}
@@ -1200,6 +1363,15 @@ ARI_kern.05_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.05_km.clus10
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.05_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.05_km.clus10
+```
+
+
 
 ##### Graph-based clustering
 ```{r}
@@ -1257,6 +1429,16 @@ ARI_kern.05_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$l
 ARI_kern.05_graph
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.05_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.05_graph
+```
+
+
+
 
 
 ##### SUMMARY
@@ -1284,6 +1466,16 @@ ARIs_kern.05_df
 ```
 
 
+```{r}
+## NMI
+NMIs_kern.05 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', NMI_kern.05_km.clus7, NMI_kern.05_km.clus8, NMI_kern.05_km.clus10, NMI_kern.05_graph), ncol=2, byrow=F)
+
+colnames(NMIs_kern.05) <- c('Clustering Method', 'Kernel, 0.05')
+
+NMIs_kern.05_df <- as.data.frame(NMIs_kern.05)
+
+NMIs_kern.05_df
+```
 
 
 _____________________________________________________________________
@@ -1385,6 +1577,15 @@ ARI_kern.1_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.1_km.clus7
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.1_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.1_km.clus7
+```
+
+
 
 
 ##### K-means clustering with 8 centers
@@ -1446,6 +1647,15 @@ ARI_kern.1_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.1_km.clus8
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.1_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.1_km.clus8
+```
+
+
 
 ##### K-means clustering with 10 centers
 ```{r}
@@ -1506,6 +1716,15 @@ ARI_kern.1_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.1_km.clus10
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.1_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.1_km.clus10
+```
+
+
 
 ##### Graph-based clustering
 ```{r}
@@ -1563,6 +1782,15 @@ ARI_kern.1_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$la
 ARI_kern.1_graph
 ```
 
+###### Normalized Mutual Information
+
+```{r}
+# library(randnet)
+NMI_kern.1_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.1_graph
+```
+
+
 
 
 ##### SUMMARY
@@ -1589,10 +1817,22 @@ ARIs_kern.1_df <- as.data.frame(ARIs_kern.1)
 ARIs_kern.1_df
 ```
 
+```{r}
+## NMI
+NMIs_kern.1 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', NMI_kern.1_km.clus7, NMI_kern.1_km.clus8, NMI_kern.1_km.clus10, NMI_kern.1_graph), ncol=2, byrow=F)
+
+colnames(NMIs_kern.1) <- c('Clustering Method', 'Kernel, 0.1')
+
+NMIs_kern.1_df <- as.data.frame(NMIs_kern.1)
+
+NMIs_kern.1_df
+```
+
+
 
 ### DLPFC Results Summary
 
-ARIs
+#### ARIs
 
 ```{r}
 aris_list <- list(ARIs_uni_df, ARIs_kern.02_df, ARIs_kern.04_df, ARIs_kern.05_df, ARIs_kern.1_df)
@@ -1607,4 +1847,23 @@ ARI_DLPFC[is.num] <- lapply(ARI_DLPFC[is.num], round, 4)
 
 ARI_DLPFC
 ```
+
+#### NMIs
+
+```{r}
+NMIs_list <- list(NMIs_uni_df, NMIs_kern.02_df, NMIs_kern.04_df, NMIs_kern.05_df, NMIs_kern.1_df)
+NMI_DLPFC <- Reduce(function(x, y) merge(x, y, ), NMIs_list)
+
+cols <- c(2:6)
+NMI_DLPFC[ , cols] <- apply(NMI_DLPFC[ , cols,drop=F], 2,           
+                    function(x) as.numeric(as.character(x)))
+
+is.num <- sapply(NMI_DLPFC, is.numeric)
+NMI_DLPFC[is.num] <- lapply(NMI_DLPFC[is.num], round, 4)
+
+NMI_DLPFC
+```
+
+
+
 
