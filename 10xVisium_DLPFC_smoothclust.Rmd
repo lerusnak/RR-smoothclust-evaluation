@@ -1,0 +1,1610 @@
+---
+title: "smoothclust on 10x Genomics Visium Human DLPFC"
+author: "Lauren Rusnak"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Prep
+
+Packages:
+```{r}
+library(SpatialExperiment)
+library(STexampleData)
+library(scran)
+library(ggspavis)
+library(scater)
+library(smoothclust)
+library(stats)
+library(mclust)
+library(dplyr)
+```
+
+
+Color pallete:
+```{r}
+colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
+```
+
+
+
+### Load human DLPFC Data
+
+*Download data object*
+```{r}
+spe <- Visium_humanDLPFC() 
+spe <- spe[, colData(spe)$in_tissue == 1]
+```
+
+
+### Normalization and Feature Selection
+
+*Calculate highly variable genes (HVGs) and select the top HVGs*
+```{r}
+spe <- logNormCounts(spe) 
+
+is_mito <- grepl("(^MT-)|(^mt-)", rowData(spe)$gene_name)
+spe <- spe[!is_mito, ]
+
+spe_full <- spe
+
+# library(scran)
+
+dec <- modelGeneVar(spe) 
+top_hvgs <- getTopHVGs(dec, prop = 0.1)
+spe <- spe[top_hvgs, ]
+dim(spe)
+```
+
+
+_________________________________________________________________________
+
+
+### **Run smoothclust with different parameters**
+
+#### Method: Uniform
+
+```{r}
+# library(smoothclust)
+spe <- smoothclust(spe, method = "uniform")
+assayNames(spe)
+```
+
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+##### K-means clustering with 7 centers
+```{r}
+## 7 centers (one fore each true layer + 1 for white matter)
+
+set.seed(123)
+
+km.7 <- kmeans(pcs, centers = 7)
+
+table(km.7$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.7$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus7)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_uni_km7
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+xyplot_groundtruth <- plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+xyplot_groundtruth 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_uni_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_uni_km.clus7
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers (one fore each true layer + 2 for white matter)
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_uni_km8
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_uni_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_uni_km.clus8
+```
+
+
+##### K-means clustering with 10 centers
+```{r}
+## 10 centers
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km10 <- plotSpots(spe, annotate = "label", 
+          palette = colors,
+          size = 0.7)
+xyplot_uni_km10 
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_uni_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_uni_km.clus10
+```
+
+
+##### Graph-based clustering
+```{r}
+# graph-based clustering
+set.seed(123)
+k <- 45
+g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
+g_walk <- igraph::cluster_walktrap(g)
+g_clus <- g_walk$membership
+table(g_clus)
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(g_clus)
+```
+
+###### Visualizations
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_graph <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_uni_graph
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_uni_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_uni_graph
+```
+
+
+##### SUMMARY
+
+```{r}
+## Visualizations
+xyplot_groundtruth
+
+par(mfrow=c(2,2))
+xyplot_uni_graph
+xyplot_uni_km7
+xyplot_uni_km8
+xyplot_uni_km10
+```
+
+```{r}
+## ARI
+ARIs_uni <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_uni_km.clus7, ARI_uni_km.clus8, ARI_uni_km.clus10, ARI_uni_graph), ncol=2, byrow=F)
+
+colnames(ARIs_uni) <- c('Clustering Method', 'Uniform')
+
+ARIs_uni_df <- as.data.frame(ARIs_uni)
+
+ARIs_uni_df
+```
+
+
+
+
+_________________________________________________________________________
+
+
+#### Method: Kernel, bandwidth = 0.02
+
+```{r}
+# library(smoothclust)
+
+# run smoothclust
+spe <- smoothclust(spe, method = "kernel", bandwidth = 0.02)
+
+assayNames(spe)
+```
+
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+# Principal components for k-means clustering
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+
+##### K-means clustering with 7 centers
+```{r}
+## 7 centers (one fore each true layer + 1 for white matter)
+
+set.seed(123)
+
+km.7 <- kmeans(pcs, centers = 7)
+
+table(km.7$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.7$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus7)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.02_km7 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.02_km7
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.02_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.02_km.clus7
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers (one fore each true layer + 2 for white matter)
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.02_km8 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.02_km8
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.02_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.02_km.clus8
+```
+
+
+##### K-means clustering with 10 centers
+```{r}
+## 10 centers
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.02_km10 <- plotSpots(spe, annotate = "label", 
+          palette = colors,
+          size = 0.7)
+xyplot_kern.02_km10
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = colors,
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.02_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.02_km.clus10
+```
+
+
+##### Graph-based clustering
+```{r}
+# graph-based clustering
+set.seed(123)
+k <- 45
+g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
+g_walk <- igraph::cluster_walktrap(g)
+g_clus <- g_walk$membership
+table(g_clus)
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(g_clus)
+```
+
+###### Visualizations
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.02_graph <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.02_graph
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.02_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.02_graph
+```
+
+
+
+##### SUMMARY
+
+```{r}
+## Visualizations
+xyplot_groundtruth
+
+par(mfrow=c(2,2))
+xyplot_kern.02_graph
+xyplot_kern.02_km7
+xyplot_kern.02_km8
+xyplot_kern.02_km10
+```
+
+```{r}
+## ARI
+ARIs_kern.02 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_kern.02_km.clus7, ARI_kern.02_km.clus8, ARI_kern.02_km.clus10, ARI_kern.02_graph), ncol=2, byrow=F)
+
+colnames(ARIs_kern.02) <- c('Clustering Method','Kernel, 0.02')
+
+ARIs_kern.02_df <- as.data.frame(ARIs_kern.02)
+
+ARIs_kern.02_df
+```
+
+
+_______________________________________________________________________
+
+
+#### Method: kernel, bandwidth = 0.04
+
+
+```{r}
+# library(smoothclust)
+
+# run smoothclust
+spe <- smoothclust(spe, method = "kernel", bandwidth = 0.04)
+```
+
+```{r}
+# check
+assayNames(spe)
+```
+
+
+##### Dimensionality reduction
+
+```{r}
+# compute PCA
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+```
+
+```{r}
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+```
+
+```{r}
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+```
+
+
+```{r}
+plotDimRed(spe, type = "PCA")
+```
+
+```{r}
+pcs <- reducedDim(spe, "PCA")
+# plot(pcs)
+```
+
+
+
+##### K-means clustering with 7 centers
+```{r}
+## 7 centers (one fore each true layer + 1 for white matter)
+
+set.seed(123)
+
+km.7 <- kmeans(pcs, centers = 7)
+
+table(km.7$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.7$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus7)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.04_km7 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.04_km7
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.04_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.04_km.clus7
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers (one fore each true layer + 2 for white matter)
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.04_km8 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.04_km8
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.04_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.04_km.clus8
+```
+
+
+##### K-means clustering with 10 centers
+```{r}
+## 10 centers
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.04_km10 <- plotSpots(spe, annotate = "label", 
+          palette = colors,
+          size = 0.7)
+xyplot_kern.04_km10
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.04_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.04_km.clus10
+```
+
+
+##### Graph-based clustering
+```{r}
+# graph-based clustering
+set.seed(123)
+k <- 30
+g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
+g_walk <- igraph::cluster_walktrap(g)
+g_clus <- g_walk$membership
+table(g_clus)
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(g_clus)
+```
+
+###### Visualizations
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.04_graph <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.04_graph
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.04_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.04_graph
+```
+
+
+##### SUMMARY
+
+```{r}
+## Visualizations
+xyplot_groundtruth
+
+par(mfrow=c(2,2))
+xyplot_kern.04_graph
+xyplot_kern.04_km7
+xyplot_kern.04_km8
+xyplot_kern.04_km10
+```
+
+```{r}
+## ARI
+ARIs_kern.04 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_kern.04_km.clus7, ARI_kern.04_km.clus8, ARI_kern.04_km.clus10, ARI_kern.04_graph), ncol=2, byrow=F)
+
+colnames(ARIs_kern.04) <- c('Clustering Method','Kernel, 0.04')
+
+ARIs_kern.04_df <- as.data.frame(ARIs_kern.04)
+
+ARIs_kern.04_df
+```
+
+
+_______________________________________________________________________
+
+#### Method: Kernel , bandwidth = 0.05
+
+```{r}
+# library(smoothclust)
+
+# run smoothclust
+spe <- smoothclust(spe, method = "kernel", bandwidth = 0.05)
+
+assayNames(spe)
+```
+
+
+##### Dimensionality reduction
+
+```{r}
+# Principla Component Analysis
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+# Principal Components for k-means clustering
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+
+##### K-means clustering with 7 centers
+```{r}
+## 7 centers (one fore each true layer + 1 for white matter)
+
+set.seed(123)
+
+km.7 <- kmeans(pcs, centers = 7)
+
+table(km.7$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.7$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus7)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.05_km7 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.05_km7
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.05_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.05_km.clus7
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers (one fore each true layer + 2 for white matter)
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.05_km8 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.05_km8
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.05_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.05_km.clus8
+```
+
+
+##### K-means clustering with 10 centers
+```{r}
+## 10 centers
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.05_km10 <- plotSpots(spe, annotate = "label", 
+          palette = colors,
+          size = 0.7)
+xyplot_kern.05_km10
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = colors,
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.05_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.05_km.clus10
+```
+
+
+##### Graph-based clustering
+```{r}
+# graph-based clustering
+set.seed(123)
+k <- 45
+g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
+g_walk <- igraph::cluster_walktrap(g)
+g_clus <- g_walk$membership
+table(g_clus)
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(g_clus)
+```
+
+###### Visualizations
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.05_graph <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.05_graph
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.05_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.05_graph
+```
+
+
+
+##### SUMMARY
+
+```{r}
+## Visualizations
+xyplot_groundtruth
+
+par(mfrow=c(2,2))
+xyplot_kern.05_graph
+xyplot_kern.05_km7
+xyplot_kern.05_km8
+xyplot_kern.05_km10
+```
+
+```{r}
+## ARI
+ARIs_kern.05 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_kern.05_km.clus7, ARI_kern.05_km.clus8, ARI_kern.05_km.clus10, ARI_kern.05_graph), ncol=2, byrow=F)
+
+colnames(ARIs_kern.05) <- c('Clustering Method', 'Kernel, 0.05')
+
+ARIs_kern.05_df <- as.data.frame(ARIs_kern.05)
+
+ARIs_kern.05_df
+```
+
+
+
+
+_____________________________________________________________________
+
+
+#### Method: Kernel , bandwidth = 0.1
+
+```{r}
+# library(smoothclust)
+
+# run smoothclust
+spe <- smoothclust(spe, method = "kernel", bandwidth = 0.1)
+
+assayNames(spe)
+```
+
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+```
+
+```{r}
+# Principle components for k-means clustering
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+
+##### K-means clustering with 7 centers
+```{r}
+## 7 centers (one fore each true layer + 1 for white matter)
+
+set.seed(123)
+
+km.7 <- kmeans(pcs, centers = 7)
+
+table(km.7$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.7$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus7)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.1_km7 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.1_km7
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.1_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.1_km.clus7
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers (one fore each true layer + 2 for white matter)
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.1_km8 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_kern.1_km8
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.1_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.1_km.clus8
+```
+
+
+##### K-means clustering with 10 centers
+```{r}
+## 10 centers
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+###### Visualization
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.1_km10 <- plotSpots(spe, annotate = "label", 
+          palette = colors,
+          size = 0.7)
+xyplot_kern.1_km10
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.1_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.1_km.clus10
+```
+
+
+##### Graph-based clustering
+```{r}
+# graph-based clustering
+set.seed(123)
+k <- 45
+g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
+g_walk <- igraph::cluster_walktrap(g)
+g_clus <- g_walk$membership
+table(g_clus)
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(g_clus)
+```
+
+###### Visualizations
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.1_graph <- plotSpots(spe, annotate = "label", 
+          palette = colors,
+          size = 0.7)
+xyplot_kern.1_graph
+```
+
+```{r}
+# plot ground truth labels in spatial coordinates
+plotSpots(spe, annotate = "ground_truth", 
+          palette = "libd_layer_colors",
+          size = 0.7) 
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+```{r}
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.7)
+```
+
+
+###### Adjusted Rand Index
+
+```{r}
+# library(mclust)
+ARI_kern.1_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.1_graph
+```
+
+
+
+##### SUMMARY
+
+```{r}
+## Visualizations
+xyplot_groundtruth
+
+par(mfrow=c(2,2))
+xyplot_kern.05_graph
+xyplot_kern.05_km7
+xyplot_kern.05_km8
+xyplot_kern.05_km10
+```
+
+```{r}
+## ARI
+ARIs_kern.1 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_kern.1_km.clus7, ARI_kern.1_km.clus8, ARI_kern.1_km.clus10, ARI_kern.1_graph), ncol=2, byrow=F)
+
+colnames(ARIs_kern.1) <- c('Clustering Method', 'Kernel, 0.1')
+
+ARIs_kern.1_df <- as.data.frame(ARIs_kern.1)
+
+ARIs_kern.1_df
+```
+
+
+### DLPFC Results Summary
+
+ARIs
+
+```{r}
+aris_list <- list(ARIs_uni_df, ARIs_kern.02_df, ARIs_kern.04_df, ARIs_kern.05_df, ARIs_kern.1_df)
+ARI_DLPFC <- Reduce(function(x, y) merge(x, y, ), aris_list)
+
+cols <- c(2:6)
+ARI_DLPFC[ , cols] <- apply(ARI_DLPFC[ , cols,drop=F], 2,           
+                    function(x) as.numeric(as.character(x)))
+
+is.num <- sapply(ARI_DLPFC, is.numeric)
+ARI_DLPFC[is.num] <- lapply(ARI_DLPFC[is.num], round, 4)
+
+ARI_DLPFC
+```
+
