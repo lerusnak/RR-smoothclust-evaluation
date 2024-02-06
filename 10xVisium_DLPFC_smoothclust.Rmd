@@ -1,6 +1,6 @@
 ---
 title: "smoothclust on 10x Genomics Visium Human DLPFC"
-author: "Lauren Rusnak"
+author: "Lauren Rusnak and Dr. Lukas Weber"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -114,22 +114,21 @@ km.clus7 <- km.7$cluster
 colLabels(spe) <- factor(km.clus7)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_uni_km7
-```
 
-```{r}
 # plot ground truth labels in spatial coordinates
 xyplot_groundtruth <- plotSpots(spe, annotate = "ground_truth", 
           palette = "libd_layer_colors",
           size = 0.7) 
-xyplot_groundtruth 
+
+gridExtra::grid.arrange(xyplot_uni_km7, xyplot_groundtruth, ncol=2)
+
 ```
 
 
@@ -139,9 +138,7 @@ xyplot_groundtruth
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -149,7 +146,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -157,9 +154,10 @@ ARI_uni_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_uni_km.clus7
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
+# library(randnet)
 NMI_uni_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7)
 NMI_uni_km.clus7
 ```
@@ -186,23 +184,16 @@ km.clus8 <- km.8$cluster
 colLabels(spe) <- factor(km.clus8)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
-          size = 0.7)
-xyplot_uni_km8
-```
+          size = 0.8)
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_uni_km8, xyplot_groundtruth, ncol=2)
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
@@ -210,9 +201,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -220,7 +209,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -228,7 +217,7 @@ ARI_uni_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_uni_km.clus8
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -256,21 +245,15 @@ km.clus10 <- km.10$cluster
 colLabels(spe) <- factor(km.clus10)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km10 <- plotSpots(spe, annotate = "label", 
           palette = colors,
           size = 0.7)
-xyplot_uni_km10 
-```
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_uni_km10, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -280,9 +263,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = colors,
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = colors,
@@ -290,7 +271,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -298,7 +279,7 @@ ARI_uni_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_uni_km.clus10
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -322,21 +303,14 @@ table(g_clus)
 colLabels(spe) <- factor(g_clus)
 ```
 
-###### Visualizations
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_graph <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_uni_graph
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_uni_graph, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -346,9 +320,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -356,7 +328,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -365,7 +337,7 @@ ARI_uni_graph
 ```
 
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -380,13 +352,13 @@ NMI_uni_graph
 
 ```{r}
 ## Visualizations
-xyplot_groundtruth
-
-par(mfrow=c(2,2))
-xyplot_uni_graph
-xyplot_uni_km7
-xyplot_uni_km8
-xyplot_uni_km10
+gridExtra::grid.arrange( 
+  xyplot_uni_km7,
+  xyplot_uni_km8,
+  xyplot_uni_km10,
+  xyplot_uni_graph,
+  ncol=2)
+ xyplot_groundtruth
 ```
 
 ```{r}
@@ -399,7 +371,6 @@ ARIs_uni_df <- as.data.frame(ARIs_uni)
 
 ARIs_uni_df
 ```
-
 
 ```{r}
 ## NMI
@@ -468,21 +439,15 @@ km.clus7 <- km.7$cluster
 colLabels(spe) <- factor(km.clus7)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km7 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.02_km7
-```
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.02_km7, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -492,9 +457,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -502,7 +465,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -510,7 +473,7 @@ ARI_kern.02_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.02_km.clus7
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -537,21 +500,15 @@ km.clus8 <- km.8$cluster
 colLabels(spe) <- factor(km.clus8)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km8 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.02_km8
-```
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.02_km8, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -561,9 +518,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -571,7 +526,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -579,7 +534,7 @@ ARI_kern.02_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.02_km.clus8
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -606,21 +561,15 @@ km.clus10 <- km.10$cluster
 colLabels(spe) <- factor(km.clus10)
 ```
 
-###### Visualization
+###### **Visualizaton**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km10 <- plotSpots(spe, annotate = "label", 
           palette = colors,
           size = 0.7)
-xyplot_kern.02_km10
-```
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = colors,
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.02_km10, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -630,9 +579,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = colors,
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = colors,
@@ -640,7 +587,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -648,7 +595,7 @@ ARI_kern.02_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.02_km.clus10
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -672,21 +619,15 @@ table(g_clus)
 colLabels(spe) <- factor(g_clus)
 ```
 
-###### Visualizations
+###### **Visualizaton**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_graph <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.02_graph
-```
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.02_graph , xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -696,9 +637,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -706,7 +645,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -714,7 +653,7 @@ ARI_kern.02_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$l
 ARI_kern.02_graph
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -727,13 +666,13 @@ NMI_kern.02_graph
 
 ```{r}
 ## Visualizations
-xyplot_groundtruth
-
-par(mfrow=c(2,2))
-xyplot_kern.02_graph
-xyplot_kern.02_km7
-xyplot_kern.02_km8
-xyplot_kern.02_km10
+gridExtra::grid.arrange( 
+  xyplot_kern.02_km7,
+  xyplot_kern.02_km8,
+  xyplot_kern.02_km10,
+  xyplot_kern.02_graph,
+  xyplot_groundtruth,
+  ncol=2)
 ```
 
 ```{r}
@@ -833,21 +772,15 @@ km.clus7 <- km.7$cluster
 colLabels(spe) <- factor(km.clus7)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km7 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.04_km7
-```
 
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.04_km7, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -857,9 +790,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -867,7 +798,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -875,7 +806,7 @@ ARI_kern.04_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.04_km.clus7
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -903,21 +834,14 @@ km.clus8 <- km.8$cluster
 colLabels(spe) <- factor(km.clus8)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km8 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.04_km8
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.04_km8, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -927,9 +851,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -937,7 +859,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -945,7 +867,7 @@ ARI_kern.04_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.04_km.clus8
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -973,21 +895,14 @@ km.clus10 <- km.10$cluster
 colLabels(spe) <- factor(km.clus10)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km10 <- plotSpots(spe, annotate = "label", 
           palette = colors,
           size = 0.7)
-xyplot_kern.04_km10
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.04_km10, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -997,9 +912,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = colors,
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = colors,
@@ -1007,7 +920,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1015,7 +928,7 @@ ARI_kern.04_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.04_km.clus10
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1040,21 +953,14 @@ table(g_clus)
 colLabels(spe) <- factor(g_clus)
 ```
 
-###### Visualizations
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_graph <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.04_graph
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.04_graph, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1064,9 +970,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -1074,7 +978,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1082,7 +986,7 @@ ARI_kern.04_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$l
 ARI_kern.04_graph
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1095,13 +999,13 @@ NMI_kern.04_graph
 
 ```{r}
 ## Visualizations
-xyplot_groundtruth
-
-par(mfrow=c(2,2))
-xyplot_kern.04_graph
-xyplot_kern.04_km7
-xyplot_kern.04_km8
-xyplot_kern.04_km10
+gridExtra::grid.arrange( 
+  xyplot_kern.04_km7,
+  xyplot_kern.04_km8,
+  xyplot_kern.04_km10,
+  xyplot_kern.04_graph,
+  xyplot_groundtruth,
+  ncol=2)
 ```
 
 ```{r}
@@ -1182,21 +1086,14 @@ km.clus7 <- km.7$cluster
 colLabels(spe) <- factor(km.clus7)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km7 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.05_km7
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.05_km7, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1206,9 +1103,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -1216,7 +1111,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1224,7 +1119,7 @@ ARI_kern.05_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.05_km.clus7
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1251,21 +1146,14 @@ km.clus8 <- km.8$cluster
 colLabels(spe) <- factor(km.clus8)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km8 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.05_km8
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.05_km8, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1275,9 +1163,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -1285,7 +1171,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1293,7 +1179,7 @@ ARI_kern.05_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.05_km.clus8
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1321,21 +1207,14 @@ km.clus10 <- km.10$cluster
 colLabels(spe) <- factor(km.clus10)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km10 <- plotSpots(spe, annotate = "label", 
           palette = colors,
           size = 0.7)
-xyplot_kern.05_km10
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = colors,
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.05_km10, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1345,9 +1224,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = colors,
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = colors,
@@ -1355,7 +1232,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1363,7 +1240,7 @@ ARI_kern.05_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.05_km.clus10
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1387,21 +1264,14 @@ table(g_clus)
 colLabels(spe) <- factor(g_clus)
 ```
 
-###### Visualizations
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_graph <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.05_graph
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.05_graph, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1411,9 +1281,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -1421,7 +1289,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1429,7 +1297,7 @@ ARI_kern.05_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$l
 ARI_kern.05_graph
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1445,13 +1313,13 @@ NMI_kern.05_graph
 
 ```{r}
 ## Visualizations
-xyplot_groundtruth
-
-par(mfrow=c(2,2))
-xyplot_kern.05_graph
-xyplot_kern.05_km7
-xyplot_kern.05_km8
-xyplot_kern.05_km10
+gridExtra::grid.arrange( 
+  xyplot_kern.05_km7,
+  xyplot_kern.05_km8,
+  xyplot_kern.05_km10,
+  xyplot_kern.05_graph,
+  xyplot_groundtruth,
+  ncol=2)
 ```
 
 ```{r}
@@ -1535,21 +1403,14 @@ km.clus7 <- km.7$cluster
 colLabels(spe) <- factor(km.clus7)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km7 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.1_km7
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.1_km7, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1559,9 +1420,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -1569,7 +1428,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1577,7 +1436,7 @@ ARI_kern.1_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
 ARI_kern.1_km.clus7
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1605,21 +1464,14 @@ km.clus8 <- km.8$cluster
 colLabels(spe) <- factor(km.clus8)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km8 <- plotSpots(spe, annotate = "label", 
           palette = "libd_layer_colors",
           size = 0.7)
-xyplot_kern.1_km8
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.1_km8, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1629,9 +1481,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = "libd_layer_colors",
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = "libd_layer_colors",
@@ -1639,7 +1489,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1647,7 +1497,7 @@ ARI_kern.1_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
 ARI_kern.1_km.clus8
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1674,21 +1524,14 @@ km.clus10 <- km.10$cluster
 colLabels(spe) <- factor(km.clus10)
 ```
 
-###### Visualization
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km10 <- plotSpots(spe, annotate = "label", 
           palette = colors,
           size = 0.7)
-xyplot_kern.1_km10
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.1_km10, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1698,9 +1541,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = colors,
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = colors,
@@ -1708,7 +1549,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1716,7 +1557,7 @@ ARI_kern.1_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
 ARI_kern.1_km.clus10
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1740,21 +1581,14 @@ table(g_clus)
 colLabels(spe) <- factor(g_clus)
 ```
 
-###### Visualizations
+###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_graph <- plotSpots(spe, annotate = "label", 
           palette = colors,
           size = 0.7)
-xyplot_kern.1_graph
-```
-
-```{r}
-# plot ground truth labels in spatial coordinates
-plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+gridExtra::grid.arrange(xyplot_kern.1_graph, xyplot_groundtruth, ncol=2)
 ```
 
 
@@ -1764,9 +1598,7 @@ plotSpots(spe, annotate = "ground_truth",
 plotDimRed(spe, type = "PCA", 
            annotate = "label", palette = colors,
            size = 0.7)
-```
 
-```{r}
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
            annotate = "label", palette = colors,
@@ -1774,7 +1606,7 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
-###### Adjusted Rand Index
+###### **Adjusted Rand Index**
 
 ```{r}
 # library(mclust)
@@ -1782,7 +1614,7 @@ ARI_kern.1_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$la
 ARI_kern.1_graph
 ```
 
-###### Normalized Mutual Information
+###### **Normalized Mutual Information**
 
 ```{r}
 # library(randnet)
@@ -1797,13 +1629,13 @@ NMI_kern.1_graph
 
 ```{r}
 ## Visualizations
-xyplot_groundtruth
-
-par(mfrow=c(2,2))
-xyplot_kern.05_graph
-xyplot_kern.05_km7
-xyplot_kern.05_km8
-xyplot_kern.05_km10
+gridExtra::grid.arrange( 
+  xyplot_kern.1_km7,
+  xyplot_kern.1_km8,
+  xyplot_kern.1_km10,
+  xyplot_kern.1_graph,
+  xyplot_groundtruth,
+  ncol=2)
 ```
 
 ```{r}
