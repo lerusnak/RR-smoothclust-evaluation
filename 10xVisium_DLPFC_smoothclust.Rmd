@@ -68,11 +68,15 @@ _________________________________________________________________________
 
 #### Method: Uniform
 
-```{r}
+```{r, include = FALSE}
 # library(smoothclust)
 spe <- smoothclust(spe, method = "uniform")
+```
+
+```{r}
 assayNames(spe)
 ```
+
 
 
 ##### Dimensionality reduction
@@ -389,12 +393,14 @@ _________________________________________________________________________
 
 #### Method: Kernel, bandwidth = 0.02
 
-```{r}
+```{r, include=FALSE}
 # library(smoothclust)
 
 # run smoothclust
 spe <- smoothclust(spe, method = "kernel", bandwidth = 0.02)
+```
 
+```{r}
 assayNames(spe)
 ```
 
@@ -706,7 +712,7 @@ _______________________________________________________________________
 #### Method: kernel, bandwidth = 0.04
 
 
-```{r}
+```{r, include=FALSE}
 # library(smoothclust)
 
 # run smoothclust
@@ -1036,14 +1042,17 @@ _______________________________________________________________________
 
 #### Method: Kernel , bandwidth = 0.05
 
-```{r}
+```{r, include=FALSE}
 # library(smoothclust)
 
 # run smoothclust
 spe <- smoothclust(spe, method = "kernel", bandwidth = 0.05)
+```
 
+```{r}
 assayNames(spe)
 ```
+
 
 
 ##### Dimensionality reduction
@@ -1351,14 +1360,18 @@ _____________________________________________________________________
 
 #### Method: Kernel , bandwidth = 0.1
 
-```{r}
+```{r, include=FALSE}
 # library(smoothclust)
 
 # run smoothclust
 spe <- smoothclust(spe, method = "kernel", bandwidth = 0.1)
+```
 
+```{r}
 assayNames(spe)
 ```
+
+
 
 
 ##### Dimensionality reduction

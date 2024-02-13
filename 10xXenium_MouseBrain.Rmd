@@ -169,7 +169,13 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 
+#### Method: Kernel, bandwidth = 0.5
 
+```{r}
+# library(smoothclust)
+spe <- smoothclust(spe, method = "kernel", bandwidth = 0.5)
+assayNames(spe)
+```
 
 
 
