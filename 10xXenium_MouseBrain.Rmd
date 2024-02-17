@@ -34,9 +34,9 @@ library(tibble)
 
 ```{r}
 # Create molecule experiment object
-setwd("C:\\Users\\lerus\\OneDrive\\Documents\\BU-AB\\ResearchRotation")
+setwd("C:/Users/lerus/OneDrive/Documents/BU-AB/ResearchRotation")
 baseDir <- getwd()
-dataDir <- file.path(baseDir,"\\10xXeniumData")
+dataDir <- file.path(baseDir,"10xXeniumData")
 
 me <- readXenium(dataDir, keepCols = "essential") # takes about 3 minutes
 me
@@ -102,7 +102,6 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 ###### Deciding Number of clusters
 
-'Ground Truth'
 
 ```{r}
 n_clusters <- 15
@@ -167,6 +166,14 @@ plotDimRed(spe, type = "UMAP",
            annotate = "label", palette = "libd_layer_colors",
            size = 0.5)
 ```
+
+```{r}
+xyplot_uni <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_uni
+```
+
 
 
 #### Method: Kernel, bandwidth = 0.5
