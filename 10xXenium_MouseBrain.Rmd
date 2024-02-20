@@ -25,12 +25,12 @@ library(mclust)
 library(randnet)
 library(R.utils)
 library(tibble)
+library(dplyr)
 ```
 
 
 
 ## Import Data
-
 
 ```{r}
 # Create molecule experiment object
@@ -133,10 +133,12 @@ scree_plot <- ggplot(wss_df, aes(x = clusters, y = wss, group = 1)) +
 scree_plot
 ```
 
+*Does not really help very much*
 
+
+###### 5 Clusters
 
 ```{r}
-## 75centers (one fore each true layer + 1 for white matter)
 
 set.seed(123)
 
@@ -151,8 +153,7 @@ km.clus5 <- km.5$cluster
 colLabels(spe) <- factor(km.clus5)
 ```
 
-###### **Visualization**
-
+####### **Visualization**
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
@@ -168,11 +169,90 @@ plotDimRed(spe, type = "UMAP",
 ```
 
 ```{r}
-xyplot_uni <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
-xyplot_uni
+# Plot Spots not working - Error: '`data` must be uniquely named but has duplicate columns'
+xyplot_uni <- plotSpots(spe, 
+                        in_tissue = NULL, sample_id = "cell_id",
+                        annotate = "label",
+                        palette = "libd_layer_colors",
+                        size = 0.5)
 ```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.4) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+________________________________________________________________________
+
+
+###### 10 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+####### **Visualization**
+
+```{r}
+colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+```
+
+```{r}
+# Plot Spots not working - Error: '`data` must be uniquely named but has duplicate columns'
+xyplot_uni <- plotSpots(spe, 
+                        in_tissue = NULL, sample_id = "cell_id",
+                        annotate = "label",
+                        palette = "libd_layer_colors",
+                        size = 0.5)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.4) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
 
 
 
