@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Prep
 
-```{r}
+```{r include=F}
 library(MoleculeExperiment)
 library(SpatialExperiment)
 library(STexampleData)
@@ -53,9 +53,87 @@ spe
 ### Normalization
 
 ```{r}
-spe <- logNormCounts(spe) 
-spe
+spe1 <- logNormCounts(spe) 
+spe1
 ```
+
+### Non-spatial Clustering
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe1, ncomponents = 50, exprs_values = "logcounts")
+
+dim(reducedDim(spe, "PCA"))
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+#### K means
+
+##### 5 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.5 <- kmeans(pcs, centers = 5)
+
+table(km.5$cluster)
+
+# kmeans cluster assignments
+km.clus5 <- km.5$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus5)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.2, size=0.1) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+##### 10 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.2, size = 0.1) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
 
 
 ### **Run smoothclust with different parameters**
@@ -64,7 +142,7 @@ spe
 
 ```{r}
 # library(smoothclust)
-spe <- smoothclust(spe, method = "uniform")
+spe <- smoothclust(spe1, method = "uniform")
 assayNames(spe)
 ```
   - takes about 35 minutes
@@ -168,14 +246,6 @@ plotDimRed(spe, type = "UMAP",
            size = 0.5)
 ```
 
-```{r}
-# Plot Spots not working - Error: '`data` must be uniquely named but has duplicate columns'
-xyplot_uni <- plotSpots(spe, 
-                        in_tissue = NULL, sample_id = "cell_id",
-                        annotate = "label",
-                        palette = "libd_layer_colors",
-                        size = 0.5)
-```
 
 *X-Y  Spatial Plot*
 ```{r}
@@ -185,7 +255,7 @@ coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
 ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.4) +
+  geom_point(alpha = 0.3, size=0.3) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
@@ -229,15 +299,6 @@ plotDimRed(spe, type = "UMAP",
            size = 0.5)
 ```
 
-```{r}
-# Plot Spots not working - Error: '`data` must be uniquely named but has duplicate columns'
-xyplot_uni <- plotSpots(spe, 
-                        in_tissue = NULL, sample_id = "cell_id",
-                        annotate = "label",
-                        palette = "libd_layer_colors",
-                        size = 0.5)
-```
-
 *X-Y  Spatial Plot*
 ```{r}
 coldat_df <- as.data.frame(colData(spe))
@@ -253,16 +314,543 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 
 
+#### Sub sample
+
+```{r}
+idx <- 1:ncol(spe)
+set.seed(123)
+idx_keep <- sample(idx, ncol(spe)/10)
+spe_sub <- spe1[, idx_keep]
+dim(spe_sub)
+```
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe_sub, ncomponents = 50, exprs_values = "logcounts")
+
+dim(reducedDim(spe, "PCA"))
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+##### Clustering on subsample 
+
+##### Graph-based
+
+```{r}
+set.seed(123)
+k <- 30
+g <- buildSNNGraph(spe, k = k, use.dimred="PCA")
+g_walk <- igraph::cluster_walktrap(g)
+clus <- g_walk$membership
+table(clus)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+colLabels(spe) <- factor(clus)
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.4) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
 
 
 
-#### Method: Kernel, bandwidth = 0.5
+##### k-means
+
+###### 5 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.5 <- kmeans(pcs, centers = 5)
+
+table(km.5$cluster)
+
+# kmeans cluster assignments
+km.clus5 <- km.5$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus5)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+###### 10 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size = 0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+_______________________________________________________________________
+_______________________________________________________________________
+
+
+
+#### Method: Kernel, bandwidth = 0.02
 
 ```{r}
 # library(smoothclust)
-spe <- smoothclust(spe, method = "kernel", bandwidth = 0.5)
+spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.02)
 assayNames(spe)
 ```
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+```{r}
+# UMAP
+set.seed(123)
+
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "UMAP"))
+
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+```
+
+
+
+##### K-means clustering 
+
+###### 5 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.5 <- kmeans(pcs, centers = 5)
+
+table(km.5$cluster)
+
+# kmeans cluster assignments
+km.clus5 <- km.5$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus5)
+```
+
+####### **Visualization**
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.5)
+```
+
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.8) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+###### 10 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+####### **Visualization**
+
+```{r}
+colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size = 0.8) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+__________________________________________________________________
+__________________________________________________________________
+
+
+
+
+
+#### Method: Kernel, bandwidth = 0.05
+
+```{r}
+# library(smoothclust)
+spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.05)
+assayNames(spe)
+```
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+```{r}
+# UMAP
+set.seed(123)
+
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "UMAP"))
+
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+```
+
+
+
+##### K-means clustering 
+
+###### 5 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.5 <- kmeans(pcs, centers = 5)
+
+table(km.5$cluster)
+
+# kmeans cluster assignments
+km.clus5 <- km.5$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus5)
+```
+
+####### **Visualization**
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.5)
+```
+
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.8) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+###### 10 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+####### **Visualization**
+
+```{r}
+colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size = 0.8) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+__________________________________________________________________
+__________________________________________________________________
+
+
+
+
+
+#### Method: Kernel, bandwidth = 0.08
+
+```{r}
+# library(smoothclust)
+spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.08)
+assayNames(spe)
+```
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+```{r}
+# UMAP
+set.seed(123)
+
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "UMAP"))
+
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+```
+
+
+
+##### K-means clustering 
+
+###### 5 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.5 <- kmeans(pcs, centers = 5)
+
+table(km.5$cluster)
+
+# kmeans cluster assignments
+km.clus5 <- km.5$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus5)
+```
+
+####### **Visualization**
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.5)
+```
+
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.8) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+###### 10 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.10 <- kmeans(pcs, centers = 10)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus10 <- km.10$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus10)
+```
+
+####### **Visualization**
+
+```{r}
+colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = colors,
+           size = 0.5)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size = 0.8) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+__________________________________________________________________
+__________________________________________________________________
 
 
 
