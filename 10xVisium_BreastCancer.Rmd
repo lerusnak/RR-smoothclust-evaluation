@@ -1,0 +1,235 @@
+---
+title: "10xVisium_BreastCancer"
+author: "Lauren Rusnak"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Prep
+
+```{r include=F}
+library(SpatialExperiment)
+library(STexampleData)
+library(scran)
+library(DropletUtils)
+library(ggplot2)
+library(ggspavis)
+library(scater)
+library(smoothclust)
+library(stats)
+library(mclust)
+library(randnet)
+library(R.utils)
+library(tibble)
+library(dplyr)
+```
+
+
+
+## Import Data
+
+_________________________________________________________________________
+
+
+
+```{r}
+dir <- file.path("C:/Users/lerus/OneDrive/Documents/BU-AB/ResearchRotation/10xVisium")
+  
+sample_ids <- c("Visium_Human_Breast_Cancer")
+samples <- file.path(dir, sample_ids)
+
+spe <- read10xVisium(samples)
+
+# tabulate number of spots mapped to tissue
+cd <- colData(spe)
+table(
+  in_tissue = cd$in_tissue, 
+  sample_id = cd$sample_id)
+
+# view available images
+imgData(spe)
+```
+
+```{r}
+spe
+```
+
+
+_______________________________________________________________________________
+
+
+### Normalization and Feature Selection
+
+*Normalization*
+```{r}
+spe <- logNormCounts(spe) 
+assayNames(spe)
+```
+
+*Calculate highly variable genes (HVGs) and select the top HVGs*
+```{r}
+dec <- modelGeneVar(spe) 
+top_hvgs <- getTopHVGs(dec, prop = 0.1)
+spe <- spe[top_hvgs, ]
+dim(spe)
+```
+
+
+
+_________________________________________________________________________
+
+
+### **Run smoothclust with different parameters**
+
+#### Method: Uniform
+
+```{r, include = FALSE}
+# library(smoothclust)
+spe <- smoothclust(spe, method = "uniform")
+```
+
+```{r}
+assayNames(spe)
+```
+
+
+
+##### Dimensionality reduction
+
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+```{r}
+n_clusters <- 15
+# Initialize total within sum of squares error: wss
+wss <- numeric(n_clusters)
+set.seed(123)
+
+# Look over 1 to n possible clusters
+for (i in 1:n_clusters) {
+  # Fit the model: km.out
+  km.out <- kmeans(pcs, centers = i, nstart = 20)
+  # Save the within cluster sum of squares
+  wss[i] <- km.out$tot.withinss
+}
+
+# Produce a scree plot
+wss_df <- tibble(clusters = 1:n_clusters, wss = wss)
+ 
+scree_plot <- ggplot(wss_df, aes(x = clusters, y = wss, group = 1)) +
+    geom_point(size = 4)+
+    geom_line() +
+    xlab('Number of clusters') +
+    scale_x_continuous(breaks = c(2,4,6,8,10,12,14,16))
+scree_plot
+```
+
+
+##### K-means clustering with 4 centers
+```{r}
+## 4 centers
+
+set.seed(123)
+
+km.4 <- kmeans(pcs, centers = 4)
+
+table(km.4$cluster)
+
+# kmeans cluster assignments
+km.clus4 <- km.4$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus4)
+```
+
+
+###### **Visualization**
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km3 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.9)
+xyplot_uni_km3
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
+
+##### K-means clustering with 7 centers
+```{r}
+## 7 centers (one fore each true layer + 1 for white matter)
+
+set.seed(123)
+
+km.7 <- kmeans(pcs, centers = 7)
+
+table(km.7$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.7$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus7)
+```
+
+
+###### **Visualization**
+
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
+          palette = "libd_layer_colors",
+          size = 0.7)
+xyplot_uni_km7
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", palette = "libd_layer_colors",
+           size = 0.7)
+```
+
+
