@@ -255,7 +255,7 @@ coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
 ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.3, size=0.3) +
+  geom_point(alpha = 0.2, size=0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
@@ -307,7 +307,7 @@ coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
 ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.4) +
+  geom_point(alpha = 0.3, 0.2) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
@@ -358,7 +358,7 @@ coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
 ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.4) +
+  geom_point(alpha = 0.3, size = 0.7) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
