@@ -102,9 +102,43 @@ colLabels(spe) <- factor(km.clus7)
 *X-Y  Spatial Plot*
 ```{r}
 plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 ```
+
+###### **Adjusted Rand Index**
+
+```{r}
+# library(mclust)
+ARI_nonspac_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_nonspac_km.clus7
+```
+
+###### **Normalized Mutual Information**
+
+```{r}
+# library(randnet)
+NMI_nonspac_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7)
+NMI_nonspac_km.clus7
+```
+
+
+###### Smoothness Metric
+
+```{r}
+nonspac.km7.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km7.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km7.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
 
 
 ###### 8 Clusters
@@ -127,8 +161,40 @@ colLabels(spe) <- factor(km.clus8)
 *X-Y  Spatial Plot*
 ```{r}
 plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+```
+
+###### **Adjusted Rand Index**
+
+```{r}
+# library(mclust)
+ARI_nonspac_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus8)
+ARI_nonspac_km.clus8
+```
+
+###### **Normalized Mutual Information**
+
+```{r}
+# library(randnet)
+NMI_nonspac_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_nonspac_km.clus8
+```
+
+###### Smoothness Metric
+
+```{r}
+nonspac.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km8.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km8.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
 ```
 
 
@@ -153,9 +219,44 @@ colLabels(spe) <- factor(km.clus10)
 *X-Y  Spatial Plot*
 ```{r}
 plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 ```
+
+
+###### **Adjusted Rand Index**
+
+```{r}
+# library(mclust)
+ARI_nonspac_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus10)
+ARI_nonspac_km.clus10
+```
+
+###### **Normalized Mutual Information**
+
+```{r}
+# library(randnet)
+NMI_nonspac_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_nonspac_km.clus10
+```
+
+
+###### Smoothness Metric
+
+```{r}
+nonspac.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km10.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km10.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
 
 
 ##### Graph-based clustering
@@ -176,8 +277,78 @@ colLabels(spe) <- factor(g_clus)
 *X-Y  Spatial Plot*
 ```{r}
 plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
+```
+
+
+###### **Adjusted Rand Index**
+
+```{r}
+# library(mclust)
+ARI_nonspac_graph <- adjustedRandIndex(colData(spe)$ground_truth,g_clus)
+ARI_nonspac_graph
+```
+
+###### **Normalized Mutual Information**
+
+```{r}
+# library(randnet)
+NMI_nonspac_graph <- NMI(colData(spe)$ground_truth, g_clus)
+NMI_nonspac_graph
+```
+
+###### Smoothness Metric
+
+```{r}
+nonspac.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.graph.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.graph.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
+##### SUMMARY
+
+```{r}
+## ARI
+ARIs_nonspac <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_nonspac_km.clus7, ARI_nonspac_km.clus8, ARI_nonspac_km.clus10, ARI_nonspac_graph), ncol=2, byrow=F)
+
+colnames(ARIs_nonspac) <- c('Clustering Method', 'Non-spatial')
+
+ARIs_nonspac_df <- as.data.frame(ARIs_nonspac)
+
+ARIs_nonspac_df
+```
+
+```{r}
+## NMI
+NMIs_nonspac <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', NMI_nonspac_km.clus7, NMI_nonspac_km.clus8, NMI_nonspac_km.clus10, NMI_nonspac_graph), ncol=2, byrow=F)
+
+colnames(NMIs_nonspac) <- c('Clustering Method', 'Non-spatial')
+
+NMIs_nonspac_df <- as.data.frame(NMIs_nonspac)
+
+NMIs_nonspac_df
+```
+
+
+```{r}
+## SM
+SMs_nonspac <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', nonspac.km7.sm$mean_discordant, nonspac.km8.sm$mean_discordant, nonspac.km10.sm$mean_discordant, nonspac.graph.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_nonspac) <- c('Clustering Method', 'Non-spatial')
+
+SMs_nonspac_df <- as.data.frame(SMs_nonspac)
+
+SMs_nonspac_df
 ```
 
 
@@ -185,16 +356,14 @@ plotSpots(spe, annotate = "label",
 _________________________________________________________________________
 
 
-### Spatially aware clustering worflow (*Run smoothclust with different parameters*)
+### Spatially aware clustering workflow (*Run smoothclust with different parameters*)
 
 #### Method: Uniform
 
 ```{r, include = FALSE}
 # library(smoothclust)
 spe <- smoothclust(spe1, method = "uniform")
-```
 
-```{r}
 assayNames(spe)
 ```
 
@@ -268,13 +437,13 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 
 # plot ground truth labels in spatial coordinates
 xyplot_groundtruth <- plotSpots(spe, annotate = "ground_truth", 
-          palette = "libd_layer_colors",
-          size = 0.7) 
+          pal = "libd_layer_colors",
+          point_size = 0.7) 
 
 gridExtra::grid.arrange(xyplot_uni_km7, xyplot_groundtruth, ncol=2)
 
@@ -284,14 +453,14 @@ gridExtra::grid.arrange(xyplot_uni_km7, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -310,6 +479,24 @@ ARI_uni_km.clus7
 NMI_uni_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7)
 NMI_uni_km.clus7
 ```
+
+###### Smoothness Metric
+
+```{r}
+uni.km7.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km7.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- uni.km7.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
 
 
 ##### K-means clustering with 8 centers
@@ -334,8 +521,8 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.8)
+          pal = "libd_layer_colors",
+          point_size = 0.8)
 
 gridExtra::grid.arrange(xyplot_uni_km8, xyplot_groundtruth, ncol=2)
 ```
@@ -343,14 +530,14 @@ gridExtra::grid.arrange(xyplot_uni_km8, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -370,6 +557,21 @@ NMI_uni_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
 NMI_uni_km.clus8
 ```
 
+###### **Smoothness Metric**
+
+```{r}
+uni.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km8.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- uni.km8.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
 
 
 
@@ -395,8 +597,8 @@ colLabels(spe) <- factor(km.clus10)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km10 <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_uni_km10, xyplot_groundtruth, ncol=2)
 ```
@@ -405,14 +607,14 @@ gridExtra::grid.arrange(xyplot_uni_km10, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -433,12 +635,29 @@ NMI_uni_km.clus10
 ```
 
 
+###### **Smoothness Metric**
+
+```{r}
+uni.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km10.sm$mean_discordant
+```
+
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- uni.km10.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
 
 ##### Graph-based clustering
 ```{r}
 # graph-based clustering
 set.seed(123)
-k <- 45
+k <- 50
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
 g_clus <- g_walk$membership
@@ -453,8 +672,8 @@ colLabels(spe) <- factor(g_clus)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_graph <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_uni_graph, xyplot_groundtruth, ncol=2)
 ```
 
@@ -462,14 +681,14 @@ gridExtra::grid.arrange(xyplot_uni_graph, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -490,6 +709,23 @@ NMI_uni_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
 NMI_uni_graph
 ```
 
+
+###### **Smoothness Metric**
+
+```{r}
+uni.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.graph.sm$mean_discordant
+```
+
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- uni.graph.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
 
 
 
@@ -529,6 +765,19 @@ NMIs_uni_df
 ```
 
 
+```{r}
+## SM
+SMs_uni <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', uni.km7.sm$mean_discordant, uni.km8.sm$mean_discordant, uni.km10.sm$mean_discordant, uni.graph.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_uni) <- c('Clustering Method', 'Uniform')
+
+SMs_uni_df <- as.data.frame(SMs_uni)
+
+SMs_uni_df
+```
+
+
+_________________________________________________________________________
 _________________________________________________________________________
 
 
@@ -614,8 +863,8 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.02_km7, xyplot_groundtruth, ncol=2)
 ```
@@ -624,14 +873,14 @@ gridExtra::grid.arrange(xyplot_kern.02_km7, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -650,6 +899,25 @@ ARI_kern.02_km.clus7
 NMI_kern.02_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
 NMI_kern.02_km.clus7
 ```
+
+
+###### **Smoothness Metric**
+
+```{r}
+kern.02.km7.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km7.sm$mean_discordant
+```
+
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- kern.02.km7.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
 
 
 
@@ -675,8 +943,8 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km8 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.02_km8, xyplot_groundtruth, ncol=2)
 ```
@@ -685,14 +953,14 @@ gridExtra::grid.arrange(xyplot_kern.02_km8, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -710,6 +978,22 @@ ARI_kern.02_km.clus8
 # library(randnet)
 NMI_kern.02_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
 NMI_kern.02_km.clus8
+```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.02.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km8.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- kern.02.km8.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
 ```
 
 
@@ -736,8 +1020,8 @@ colLabels(spe) <- factor(km.clus10)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km10 <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.02_km10, xyplot_groundtruth, ncol=2)
 ```
@@ -746,14 +1030,14 @@ gridExtra::grid.arrange(xyplot_kern.02_km10, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -773,13 +1057,29 @@ NMI_kern.02_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
 NMI_kern.02_km.clus10
 ```
 
+###### **Smoothness Metric**
+
+```{r}
+kern.02.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km10.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- kern.02.km10.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
 
 
 ##### Graph-based clustering
 ```{r}
 # graph-based clustering
 set.seed(123)
-k <- 45
+k <- 48
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
 g_clus <- g_walk$membership
@@ -794,8 +1094,8 @@ colLabels(spe) <- factor(g_clus)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_graph <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.02_graph , xyplot_groundtruth, ncol=2)
 ```
@@ -804,14 +1104,14 @@ gridExtra::grid.arrange(xyplot_kern.02_graph , xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -829,6 +1129,22 @@ ARI_kern.02_graph
 # library(randnet)
 NMI_kern.02_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
 NMI_kern.02_graph
+```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.02.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.graph.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- kern.02.graph.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
 ```
 
 
@@ -869,7 +1185,19 @@ NMIs_kern.02_df
 
 
 
+```{r}
+## SM
+SMs_kern.02 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', kern.02.km7.sm$mean_discordant, kern.02.km8.sm$mean_discordant, kern.02.km10.sm$mean_discordant, kern.02.graph.sm$mean_discordant), ncol=2, byrow=F)
 
+colnames(SMs_kern.02) <- c('Clustering Method', 'Kernel, 0.02')
+
+SMs_kern.02_df <- as.data.frame(SMs_kern.02)
+
+SMs_kern.02_df
+```
+
+
+_______________________________________________________________________
 _______________________________________________________________________
 
 
@@ -958,8 +1286,8 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.04_km7, xyplot_groundtruth, ncol=2)
 ```
@@ -968,14 +1296,14 @@ gridExtra::grid.arrange(xyplot_kern.04_km7, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -995,6 +1323,13 @@ NMI_kern.04_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
 NMI_kern.04_km.clus7
 ```
 
+###### **Smoothness Metric**
+
+```{r}
+kern.04.km7.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.04.km7.sm$mean_discordant
+```
 
 
 
@@ -1020,8 +1355,8 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km8 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.04_km8, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1029,14 +1364,14 @@ gridExtra::grid.arrange(xyplot_kern.04_km8, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -1056,6 +1391,13 @@ NMI_kern.04_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
 NMI_kern.04_km.clus8
 ```
 
+###### **Smoothness Metric**
+
+```{r}
+kern.04.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.04.km8.sm$mean_discordant
+```
 
 
 
@@ -1081,8 +1423,8 @@ colLabels(spe) <- factor(km.clus10)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km10 <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.04_km10, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1090,14 +1432,14 @@ gridExtra::grid.arrange(xyplot_kern.04_km10, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -1115,6 +1457,14 @@ ARI_kern.04_km.clus10
 # library(randnet)
 NMI_kern.04_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
 NMI_kern.04_km.clus10
+```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.04.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.04.km10.sm$mean_discordant
 ```
 
 
@@ -1139,8 +1489,8 @@ colLabels(spe) <- factor(g_clus)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_graph <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.04_graph, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1148,14 +1498,14 @@ gridExtra::grid.arrange(xyplot_kern.04_graph, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -1174,6 +1524,15 @@ ARI_kern.04_graph
 NMI_kern.04_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
 NMI_kern.04_graph
 ```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.04.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.04.graph.sm$mean_discordant
+```
+
 
 
 ##### SUMMARY
@@ -1213,6 +1572,20 @@ NMIs_kern.04_df
 ```
 
 
+```{r}
+## SM
+SMs_kern.04 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', kern.04.km7.sm$mean_discordant, kern.04.km8.sm$mean_discordant, kern.04.km10.sm$mean_discordant, kern.04.graph.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.04) <- c('Clustering Method', 'Kernel, 0.04')
+
+SMs_kern.04_df <- as.data.frame(SMs_kern.04)
+
+SMs_kern.04_df
+```
+
+
+
+_______________________________________________________________________
 _______________________________________________________________________
 
 
@@ -1300,8 +1673,8 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.05_km7, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1309,14 +1682,14 @@ gridExtra::grid.arrange(xyplot_kern.05_km7, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -1335,6 +1708,15 @@ ARI_kern.05_km.clus7
 NMI_kern.05_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
 NMI_kern.05_km.clus7
 ```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.05.km7.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km7.sm$mean_discordant
+```
+
 
 
 
@@ -1360,8 +1742,8 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km8 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.05_km8, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1369,14 +1751,14 @@ gridExtra::grid.arrange(xyplot_kern.05_km8, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -1394,6 +1776,14 @@ ARI_kern.05_km.clus8
 # library(randnet)
 NMI_kern.05_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
 NMI_kern.05_km.clus8
+```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.05.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km8.sm$mean_discordant
 ```
 
 
@@ -1421,8 +1811,8 @@ colLabels(spe) <- factor(km.clus10)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km10 <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.05_km10, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1430,14 +1820,14 @@ gridExtra::grid.arrange(xyplot_kern.05_km10, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -1456,6 +1846,15 @@ ARI_kern.05_km.clus10
 NMI_kern.05_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
 NMI_kern.05_km.clus10
 ```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.05.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km10.sm$mean_discordant
+```
+
 
 
 
@@ -1478,8 +1877,8 @@ colLabels(spe) <- factor(g_clus)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_graph <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.05_graph, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1487,14 +1886,14 @@ gridExtra::grid.arrange(xyplot_kern.05_graph, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -1514,6 +1913,13 @@ NMI_kern.05_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
 NMI_kern.05_graph
 ```
 
+###### **Smoothness Metric**
+
+```{r}
+kern.05.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.graph.sm$mean_discordant
+```
 
 
 
@@ -1555,6 +1961,19 @@ NMIs_kern.05_df
 ```
 
 
+```{r}
+## SM
+SMs_kern.05 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', kern.05.km7.sm$mean_discordant, kern.05.km8.sm$mean_discordant, kern.05.km10.sm$mean_discordant, kern.05.graph.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.05) <- c('Clustering Method', 'Kernel, 0.05')
+
+SMs_kern.05_df <- as.data.frame(SMs_kern.05)
+
+SMs_kern.05_df
+```
+
+
+_____________________________________________________________________
 _____________________________________________________________________
 
 
@@ -1644,8 +2063,8 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.1_km7, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1653,14 +2072,14 @@ gridExtra::grid.arrange(xyplot_kern.1_km7, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -1678,6 +2097,14 @@ ARI_kern.1_km.clus7
 # library(randnet)
 NMI_kern.1_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
 NMI_kern.1_km.clus7
+```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.1.km7.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.1.km7.sm$mean_discordant
 ```
 
 
@@ -1705,8 +2132,8 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km8 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
+          pal = "libd_layer_colors",
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.1_km8, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1714,14 +2141,14 @@ gridExtra::grid.arrange(xyplot_kern.1_km8, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
@@ -1740,6 +2167,15 @@ ARI_kern.1_km.clus8
 NMI_kern.1_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
 NMI_kern.1_km.clus8
 ```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.1.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.1.km8.sm$mean_discordant
+```
+
 
 
 
@@ -1765,8 +2201,8 @@ colLabels(spe) <- factor(km.clus10)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km10 <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.1_km10, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1774,14 +2210,14 @@ gridExtra::grid.arrange(xyplot_kern.1_km10, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -1800,6 +2236,15 @@ ARI_kern.1_km.clus10
 NMI_kern.1_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
 NMI_kern.1_km.clus10
 ```
+
+###### **Smoothness Metric**
+
+```{r}
+kern.1.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.1.km10.sm$mean_discordant
+```
+
 
 
 
@@ -1822,8 +2267,8 @@ colLabels(spe) <- factor(g_clus)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_graph <- plotSpots(spe, annotate = "label", 
-          palette = colors,
-          size = 0.7)
+          pal = colors,
+          point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.1_graph, xyplot_groundtruth, ncol=2)
 ```
 
@@ -1831,14 +2276,14 @@ gridExtra::grid.arrange(xyplot_kern.1_graph, xyplot_groundtruth, ncol=2)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.7)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.7)
 ```
 
 
@@ -1858,6 +2303,14 @@ NMI_kern.1_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
 NMI_kern.1_graph
 ```
 
+###### **Smoothness Metric**
+
+```{r}
+kern.1.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.1.graph.sm$mean_discordant
+```
+
 
 
 
@@ -1874,6 +2327,7 @@ gridExtra::grid.arrange(
   ncol=2)
 ```
 
+
 ```{r}
 ## ARI
 ARIs_kern.1 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', ARI_kern.1_km.clus7, ARI_kern.1_km.clus8, ARI_kern.1_km.clus10, ARI_kern.1_graph), ncol=2, byrow=F)
@@ -1884,6 +2338,7 @@ ARIs_kern.1_df <- as.data.frame(ARIs_kern.1)
 
 ARIs_kern.1_df
 ```
+
 
 ```{r}
 ## NMI
@@ -1897,16 +2352,31 @@ NMIs_kern.1_df
 ```
 
 
+```{r}
+## SM
+SMs_kern.1 <- matrix(c('kmeans (7 clusters)','kmeans (8 clusters)','kmeans (10 clusters)','graph-based', kern.1.km7.sm$mean_discordant, kern.1.km8.sm$mean_discordant, kern.1.km10.sm$mean_discordant, kern.1.graph.sm$mean_discordant), ncol=2, byrow=F)
 
-### DLPFC Results Summary
+colnames(SMs_kern.1) <- c('Clustering Method', 'Kernel, 0.1')
+
+SMs_kern.1_df <- as.data.frame(SMs_kern.1)
+
+SMs_kern.1_df
+```
+
+
+_________________________________________________________________________
+_________________________________________________________________________
+
+
+### DLPFC Quantitative Metrics Summary
 
 #### ARIs
 
 ```{r}
-aris_list <- list(ARIs_uni_df, ARIs_kern.02_df, ARIs_kern.04_df, ARIs_kern.05_df, ARIs_kern.1_df)
+aris_list <- list(ARIs_nonspac_df, ARIs_uni_df, ARIs_kern.02_df, ARIs_kern.04_df, ARIs_kern.05_df, ARIs_kern.1_df)
 ARI_DLPFC <- Reduce(function(x, y) merge(x, y, ), aris_list)
 
-cols <- c(2:6)
+cols <- c(2:7)
 ARI_DLPFC[ , cols] <- apply(ARI_DLPFC[ , cols,drop=F], 2,           
                     function(x) as.numeric(as.character(x)))
 
@@ -1919,10 +2389,10 @@ ARI_DLPFC
 #### NMIs
 
 ```{r}
-NMIs_list <- list(NMIs_uni_df, NMIs_kern.02_df, NMIs_kern.04_df, NMIs_kern.05_df, NMIs_kern.1_df)
+NMIs_list <- list(NMIs_nonspac_df, NMIs_uni_df, NMIs_kern.02_df, NMIs_kern.04_df, NMIs_kern.05_df, NMIs_kern.1_df)
 NMI_DLPFC <- Reduce(function(x, y) merge(x, y, ), NMIs_list)
 
-cols <- c(2:6)
+cols <- c(2:7)
 NMI_DLPFC[ , cols] <- apply(NMI_DLPFC[ , cols,drop=F], 2,           
                     function(x) as.numeric(as.character(x)))
 
@@ -1932,6 +2402,22 @@ NMI_DLPFC[is.num] <- lapply(NMI_DLPFC[is.num], round, 4)
 NMI_DLPFC
 ```
 
+
+#### Smoothness Metrics
+
+```{r}
+SMs_list <- list(SMs_nonspac_df, SMs_uni_df, SMs_kern.02_df, SMs_kern.04_df, SMs_kern.05_df, SMs_kern.1_df)
+SM_DLPFC <- Reduce(function(x, y) merge(x, y, ), SMs_list)
+
+cols <- c(2:7)
+SM_DLPFC[ , cols] <- apply(SM_DLPFC[ , cols,drop=F], 2,           
+                    function(x) as.numeric(as.character(x)))
+
+is.num <- sapply(SM_DLPFC, is.numeric)
+SM_DLPFC[is.num] <- lapply(SM_DLPFC[is.num], round, 4)
+
+SM_DLPFC
+```
 
 
 

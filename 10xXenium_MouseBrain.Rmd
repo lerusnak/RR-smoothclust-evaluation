@@ -44,31 +44,37 @@ me
 
 ```{r}
 # transform into spatial experiment object
-spe <- countMolecules(me)
-spe
+spe1 <- countMolecules(me)
+spe1
 ```
 - takes ~10-15 minuts
+
+
+## Non-spatially aware workflow
 
 
 ### Normalization
 
 ```{r}
-spe1 <- logNormCounts(spe) 
-spe1
+spe <- logNormCounts(spe1) 
+spe
 ```
 
-### Non-spatial Clustering
-
+### Dimensionality Reduction
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe1, ncomponents = 50, exprs_values = "logcounts")
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 
 # Vector of principal commponents for clustering 
 pcs <- reducedDim(spe, "PCA")
 ```
+
+
+### Non-spatial Clustering
+
 
 #### K means
 
@@ -103,6 +109,16 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 ```
 
 
+###### Smoothness Metric
+
+```{r}
+nonspac.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+nonspac.km5.sm$mean_discordant
+```
+
 
 ##### 10 Clusters
 
@@ -135,6 +151,120 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 ```
 
 
+###### Smoothness Metric
+
+```{r}
+nonspac.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+nonspac.km10.sm$mean_discordant
+```
+
+
+
+##### 15 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.15 <- kmeans(pcs, centers = 15)
+
+table(km.15$cluster)
+
+# kmeans cluster assignments
+km.clus15 <- km.15$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus15)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.2, size = 0.1) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+###### Smoothness Metric
+
+```{r}
+nonspac.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+nonspac.km15.sm$mean_discordant
+```
+
+
+
+##### 20 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.20 <- kmeans(pcs, centers = 20)
+
+table(km.20$cluster)
+
+# kmeans cluster assignments
+km.clus20 <- km.20$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus20)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.2, size = 0.1) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+###### Smoothness Metric
+
+```{r}
+nonspac.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+nonspac.km20.sm$mean_discordant
+```
+
+
+##### Summary
+
+```{r}
+## Smoothness Metric
+SMs_nonspac <- matrix(c('kmeans (5 clusters)','kmeans (10 clusters)','kmeans (15 clusters)','kmeans (20 clusters)', nonspac.km5.sm$mean_discordant, nonspac.km10.sm$mean_discordant, nonspac.km15.sm$mean_discordant, nonspac.km20.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_nonspac) <- c('Clustering Method', 'Non-Spatial')
+
+SMs_nonspac_df <- as.data.frame(SMs_nonspac)
+
+SMs_nonspac_df
+```
+
+___________________________________________________________________
+___________________________________________________________________
+
+
 
 ### **Run smoothclust with different parameters**
 
@@ -145,8 +275,17 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 spe <- smoothclust(spe1, method = "uniform")
 assayNames(spe)
 ```
-  - takes about 35 minutes
+  -> takes about 35 minutes
   
+  
+
+##### Normalization
+
+```{r}
+spe <- logNormCounts(spe) 
+spe
+```
+
 
 
 ##### Dimensionality reduction
@@ -154,7 +293,7 @@ assayNames(spe)
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 
@@ -166,7 +305,7 @@ pcs <- reducedDim(spe, "PCA")
 # UMAP
 set.seed(123)
 
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "UMAP"))
 
@@ -260,6 +399,18 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
+
+####### Smoothness Metric
+
+```{r}
+uni.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+uni.km5.sm$mean_discordant
+```
+
+
 ________________________________________________________________________
 
 
@@ -313,21 +464,163 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 ```
 
 
-
-#### Sub sample
+####### Smoothness Metric
 
 ```{r}
-idx <- 1:ncol(spe)
+uni.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+uni.km10.sm$mean_discordant
+```
+
+
+_____________________________________________________________________
+
+
+###### 15 Clusters
+
+```{r}
+
 set.seed(123)
-idx_keep <- sample(idx, ncol(spe)/10)
+
+km.15 <- kmeans(pcs, centers = 15)
+
+table(km.15$cluster)
+
+# kmeans cluster assignments
+km.clus15 <- km.15$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus15)
+```
+
+####### **Visualization**
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.2, size=0.1) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+####### Smoothness Metric
+
+```{r}
+uni.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+uni.km15.sm$mean_discordant
+```
+
+
+________________________________________________________________________
+
+
+###### 20 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.20 <- kmeans(pcs, centers = 20)
+
+table(km.10$cluster)
+
+# kmeans cluster assignments
+km.clus20 <- km.20$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus20)
+```
+
+
+####### **Visualization**
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, 0.2) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+####### Smoothness Metric
+
+```{r}
+uni.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+uni.km20.sm$mean_discordant
+```
+
+
+_______________________________________________________________
+
+##### Summary
+
+```{r}
+## Smoothness Metric
+SMs_uni <- matrix(c('kmeans (5 clusters)','kmeans (10 clusters)','kmeans (15 clusters)','kmeans (20 clusters)', uni.km5.sm$mean_discordant, uni.km10.sm$mean_discordant, uni.km15.sm$mean_discordant, uni.km20.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_uni) <- c('Clustering Method', 'Uniform')
+
+SMs_uni_df <- as.data.frame(SMs_uni)
+
+SMs_uni_df
+```
+
+
+
+
+
+__________________________________________________________________
+__________________________________________________________________
+
+
+
+### Sub sample
+
+```{r}
+idx <- 1:ncol(spe1)
+set.seed(123)
+idx_keep <- sample(idx, ncol(spe1)/10)
 spe_sub <- spe1[, idx_keep]
 dim(spe_sub)
 ```
 
+#### Non-spatially aware workflow
+
+##### Normalization
+
+```{r}
+spe <- logNormCounts(spe_sub) 
+spe
+```
+
+
+##### Dimensionality Reduction
+
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe_sub, ncomponents = 50, exprs_values = "logcounts")
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 
@@ -363,6 +656,15 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
+####### Smoothness Metric
+
+```{r}
+sub.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+sub.graph.sm$mean_discordant
+```
 
 
 ##### k-means
@@ -397,6 +699,21 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
+
+####### Smoothness Metric
+
+```{r}
+sub.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+sub.km5.sm$mean_discordant
+```
+
+
+__________________________________________________
+
+
 ###### 10 Clusters
 
 ```{r}
@@ -428,6 +745,126 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 ```
 
 
+####### Smoothness Metric
+
+```{r}
+sub.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+sub.km10.sm$mean_discordant
+```
+
+_____________________________________________________________
+
+
+###### 15 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.15 <- kmeans(pcs, centers = 15)
+
+table(km.15$cluster)
+
+# kmeans cluster assignments
+km.clus15 <- km.15$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus15)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+####### Smoothness Metric
+
+```{r}
+sub.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+sub.km15.sm$mean_discordant
+```
+
+
+__________________________________________________________
+
+
+###### 20 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.20 <- kmeans(pcs, centers = 20)
+
+table(km.20$cluster)
+
+# kmeans cluster assignments
+km.clus20 <- km.20$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus20)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+####### Smoothness Metric
+
+```{r}
+sub.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+sub.km20.sm$mean_discordant
+```
+
+_______________________________________________________________
+
+
+##### Summary
+
+```{r}
+## Smoothness Metric
+SMs_sub <- matrix(c('kmeans (5 clusters)','kmeans (10 clusters)','kmeans (15 clusters)','kmeans (20 clusters)', sub.km5.sm$mean_discordant, sub.km10.sm$mean_discordant, sub.km15.sm$mean_discordant, sub.km20.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_sub) <- c('Clustering Method', 'Subsample Non-Spatial')
+
+SMs_sub_df <- as.data.frame(SMs_sub)
+
+SMs_sub_df
+```
+
+
+
+
+
 _______________________________________________________________________
 _______________________________________________________________________
 
@@ -441,12 +878,24 @@ spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.02)
 assayNames(spe)
 ```
 
+  
+
+##### Normalization
+
+```{r}
+spe <- logNormCounts(spe) 
+spe
+```
+
+
+
+
 ##### Dimensionality reduction
 
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 
@@ -458,7 +907,7 @@ pcs <- reducedDim(spe, "PCA")
 # UMAP
 set.seed(123)
 
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "UMAP"))
 
@@ -469,6 +918,7 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 
 ##### K-means clustering 
+
 
 ###### 5 Clusters
 
@@ -515,6 +965,21 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
+
+
+####### Smoothness Metric
+
+```{r}
+kern02.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern02.km5.sm$mean_discordant
+```
+
+
+__________________________________________________________________
+
 
 ###### 10 Clusters
 
@@ -564,6 +1029,125 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
+
+
+####### Smoothness Metric
+
+```{r}
+kern02.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern02.km10.sm$mean_discordant
+```
+
+
+_____________________________________________________________
+
+
+###### 15 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.15 <- kmeans(pcs, centers = 15)
+
+table(km.15$cluster)
+
+# kmeans cluster assignments
+km.clus15 <- km.15$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus15)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+####### Smoothness Metric
+
+```{r}
+kern02.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern02.km15.sm$mean_discordant
+```
+
+
+__________________________________________________________
+
+
+###### 20 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.20 <- kmeans(pcs, centers = 20)
+
+table(km.20$cluster)
+
+# kmeans cluster assignments
+km.clus20 <- km.20$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus20)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+####### Smoothness Metric
+
+```{r}
+kern02.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern02.km20.sm$mean_discordant
+```
+
+
+_______________________________________________________________
+
+##### Summary
+
+```{r}
+## Smoothness Metric
+SMs_kern.02 <- matrix(c('kmeans (5 clusters)','kmeans (10 clusters)','kmeans (15 clusters)','kmeans (20 clusters)', kern02.km5.sm$mean_discordant, kern02.km10.sm$mean_discordant, kern02.km15.sm$mean_discordant, kern02.km20.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.02) <- c('Clustering Method', 'Kernel, 0.02')
+
+SMs_kern.02_df <- as.data.frame(SMs_kern.02)
+
+SMs_kern.02_df
+```
+
 
 
 
@@ -582,12 +1166,23 @@ spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.05)
 assayNames(spe)
 ```
 
+  
+
+##### Normalization
+
+```{r}
+spe <- logNormCounts(spe) 
+spe
+```
+
+
+
 ##### Dimensionality reduction
 
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 
@@ -599,7 +1194,7 @@ pcs <- reducedDim(spe, "PCA")
 # UMAP
 set.seed(123)
 
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "UMAP"))
 
@@ -657,6 +1252,23 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
+
+
+####### Smoothness Metric
+
+```{r}
+kern05.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern05.km5.sm$mean_discordant
+```
+
+
+________________________________________________________________
+
+
+
 ###### 10 Clusters
 
 ```{r}
@@ -708,10 +1320,128 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 
 
-__________________________________________________________________
-__________________________________________________________________
+####### Smoothness Metric
+
+```{r}
+kern05.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern05.km10.sm$mean_discordant
+```
 
 
+_____________________________________________________________
+
+
+###### 15 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.15 <- kmeans(pcs, centers = 15)
+
+table(km.15$cluster)
+
+# kmeans cluster assignments
+km.clus15 <- km.15$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus15)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+####### Smoothness Metric
+
+```{r}
+kern05.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern05.km15.sm$mean_discordant
+```
+
+
+__________________________________________________________
+
+
+###### 20 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.20 <- kmeans(pcs, centers = 20)
+
+table(km.20$cluster)
+
+# kmeans cluster assignments
+km.clus20 <- km.20$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus20)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+####### Smoothness Metric
+
+```{r}
+kern05.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern05.km20.sm$mean_discordant
+```
+
+
+_______________________________________________________________
+
+##### Summary
+
+```{r}
+## Smoothness Metric
+SMs_kern.05 <- matrix(c('kmeans (5 clusters)','kmeans (10 clusters)','kmeans (15 clusters)','kmeans (20 clusters)', kern05.km5.sm$mean_discordant, kern05.km10.sm$mean_discordant, kern05.km15.sm$mean_discordant, kern05.km20.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.05) <- c('Clustering Method', 'Kernel, 0.05')
+
+SMs_kern.05_df <- as.data.frame(SMs_kern.05)
+
+SMs_kern.05_df
+```
+
+
+
+
+__________________________________________________________________
+__________________________________________________________________
 
 
 
@@ -723,12 +1453,23 @@ spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.08)
 assayNames(spe)
 ```
 
+
+  
+##### Normalization
+
+```{r}
+spe <- logNormCounts(spe) 
+spe
+```
+
+
+
 ##### Dimensionality reduction
 
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, ncomponents = 50, exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 
@@ -740,7 +1481,7 @@ pcs <- reducedDim(spe, "PCA")
 # UMAP
 set.seed(123)
 
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "UMAP"))
 
@@ -798,6 +1539,21 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
+
+####### Smoothness Metric
+
+```{r}
+kern08.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern08.km5.sm$mean_discordant
+```
+
+
+________________________________________________________________________
+
+
 ###### 10 Clusters
 
 ```{r}
@@ -849,8 +1605,155 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 
 
+
+####### Smoothness Metric
+
+```{r}
+kern08.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern08.km10.sm$mean_discordant
+```
+
+
+_____________________________________________________________
+
+
+###### 15 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.15 <- kmeans(pcs, centers = 15)
+
+table(km.15$cluster)
+
+# kmeans cluster assignments
+km.clus15 <- km.15$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus15)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+####### Smoothness Metric
+
+```{r}
+kern08.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern08.km15.sm$mean_discordant
+```
+
+
+__________________________________________________________
+
+
+###### 20 Clusters
+
+```{r}
+
+set.seed(123)
+
+km.20 <- kmeans(pcs, centers = 20)
+
+table(km.20$cluster)
+
+# kmeans cluster assignments
+km.clus20 <- km.20$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus20)
+```
+
+*X-Y  Spatial Plot*
+```{r}
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.7) +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
+
+####### Smoothness Metric
+
+```{r}
+kern08.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+```
+
+```{r}
+kern08.km20.sm$mean_discordant
+```
+
+_______________________________________________________________
+
+##### Summary
+
+```{r}
+## Smoothness Metric
+SMs_kern.08 <- matrix(c('kmeans (5 clusters)','kmeans (10 clusters)','kmeans (15 clusters)','kmeans (20 clusters)', kern08.km5.sm$mean_discordant, kern08.km10.sm$mean_discordant, kern08.km15.sm$mean_discordant, kern08.km20.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.08) <- c('Clustering Method', 'Kernel, 0.08')
+
+SMs_kern.08_df <- as.data.frame(SMs_kern.08)
+
+SMs_kern.08_df
+```
+
+
 __________________________________________________________________
 __________________________________________________________________
+
+
+### Mouse Brain Results Summary
+
+#### Smoothness Metric
+
+```{r}
+SMs_list <- list(SMs_nonspac_df, SMs_uni_df, SMs_sub_df, SMs_kern.02_df, SMs_kern.05_df, SMs_kern.08_df)
+SM_DLPFC <- Reduce(function(x, y) merge(x, y, ), SMs_list)
+
+cols <- c(2:6)
+SM_DLPFC[ , cols] <- apply(SM_DLPFC[ , cols,drop=F], 2,           
+                    function(x) as.numeric(as.character(x)))
+
+is.num <- sapply(SM_DLPFC, is.numeric)
+SM_DLPFC[is.num] <- lapply(SM_DLPFC[is.num], round, 4)
+
+SM_DLPFC
+```
+
+
+*TO DO*
+
+  + run everything
+  + create summary table with all smoothing metrics
+  + smoothing metrics for DLPFC
+  + Entire workflow for Breast Cancer
+
+
 
 
 
