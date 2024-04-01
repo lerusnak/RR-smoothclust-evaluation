@@ -40,31 +40,36 @@ dir <- file.path("C:/Users/lerus/OneDrive/Documents/BU-AB/ResearchRotation/10xVi
 sample_ids <- c("Visium_Human_Breast_Cancer")
 samples <- file.path(dir, sample_ids)
 
-spe <- read10xVisium(samples)
+spe1 <- read10xVisium(samples)
 
 # tabulate number of spots mapped to tissue
-cd <- colData(spe)
+cd <- colData(spe1)
 table(
   in_tissue = cd$in_tissue, 
   sample_id = cd$sample_id)
 
 # view available images
-imgData(spe)
+imgData(spe1)
 ```
 
 ```{r}
-spe
+spe1
 ```
 
 
 _______________________________________________________________________________
 
 
+
+## Non-spatially aware workflow
+
+
+
 ### Normalization and Feature Selection
 
 *Normalization*
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe1) 
 assayNames(spe)
 ```
 
@@ -76,25 +81,8 @@ spe <- spe[top_hvgs, ]
 dim(spe)
 ```
 
-_________________________________________________________________________
 
-
-### **Run smoothclust with different parameters**
-
-#### Method: Uniform
-
-```{r, include = FALSE}
-# library(smoothclust)
-spe <- smoothclust(spe, method = "uniform")
-```
-
-```{r}
-assayNames(spe)
-```
-
-
-
-##### Dimensionality reduction
+### Dimensionality reduction
 
 ```{r}
 # Principal Component Analysis
@@ -116,6 +104,298 @@ pcs <- reducedDim(spe, "PCA")
 ```
 
 
+### K-means clustering with 3 centers
+```{r}
+## 3 centers
+
+set.seed(123)
+
+km.3 <- kmeans(pcs, centers = 3)
+
+table(km.3$cluster)
+
+# kmeans cluster assignments
+km.clus3 <- km.4$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus3)
+```
+
+
+#### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_nonspac_km3 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_nonspac_km3
+```
+
+
+#### Smoothness Metric
+```{r}
+nonspac.km3.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km3.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km3.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
+
+
+### K-means clustering with 4 centers
+```{r}
+## 4 centers
+
+set.seed(123)
+
+km.4 <- kmeans(pcs, centers = 4)
+
+table(km.4$cluster)
+
+# kmeans cluster assignments
+km.clus4 <- km.4$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus4)
+```
+
+
+#### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_nonspac_km4 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_nonspac_km4
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+#### Smoothness Metric
+```{r}
+nonspac.km4.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km4.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km4.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
+
+### K-means clustering with 6 centers
+```{r}
+## 6 centers
+
+set.seed(123)
+
+km.6 <- kmeans(pcs, centers = 6)
+
+table(km.6$cluster)
+
+# kmeans cluster assignments
+km.clus7 <- km.6$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus6)
+```
+
+
+#### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+xyplot_uni_km7
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+#### Smoothness Metric
+```{r}
+nonspac.km6.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km4.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km4.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
+
+### K-means clustering with 8 centers
+```{r}
+## 8 centers
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+
+#### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+xyplot_uni_km8
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+#### Smoothness Metric
+```{r}
+nonspac.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+nonspac.km8.sm$mean_discordant
+```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- nonspac.km8.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
+#### Nonspatial SM summary
+```{r}
+## SM
+SMs_nonspac <- matrix(c('kmeans (3 clusters)','kmeans (4 clusters)','kmeans (6 clusters)','kmeans (8 clusters)', nonspac.km3.sm$mean_discordant, nonspac.km4.sm$mean_discordant, nonspac.km6.sm$mean_discordant, nonspac.km8.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_nonspac) <- c('Clustering Method', 'Non-spatial')
+
+SMs_nonspac_df <- as.data.frame(SMs_nonspac)
+
+SMs_nonspac_df
+```
+
+
+
+_________________________________________________________________________
+
+
+## Spatially-Aware Workflows
+
+### Method: Uniform
+
+```{r, include = FALSE}
+# library(smoothclust)
+spe <- smoothclust(spe1, method = "uniform")
+```
+
+```{r}
+assayNames(spe)
+```
+
+
+#### Normalization and Feature Selection
+
+*Normalization*
+```{r}
+spe <- logNormCounts(spe) 
+assayNames(spe)
+```
+
+*Calculate highly variable genes (HVGs) and select the top HVGs*
+```{r}
+dec <- modelGeneVar(spe) 
+top_hvgs <- getTopHVGs(dec, prop = 0.1)
+spe <- spe[top_hvgs, ]
+dim(spe)
+```
+
+
+#### Dimensionality reduction
+```{r}
+# Principal Component Analysis
+set.seed(123)
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts")
+
+# UMAP on top 50 PCs -> for visualization
+set.seed(123)
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
+
+dim(reducedDim(spe, "PCA"))
+dim(reducedDim(spe, "UMAP"))
+
+# update column names
+colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
+
+# Vector of principal commponents for clustering 
+pcs <- reducedDim(spe, "PCA")
+```
+
+
+#### Clustering
 ```{r}
 n_clusters <- 15
 # Initialize total within sum of squares error: wss
@@ -134,7 +414,7 @@ for (i in 1:n_clusters) {
 wss_df <- tibble(clusters = 1:n_clusters, wss = wss)
  
 scree_plot <- ggplot(wss_df, aes(x = clusters, y = wss, group = 1)) +
-    geom_point(size = 4)+
+    geom_point(point_size = 4)+
     geom_line() +
     xlab('Number of clusters') +
     scale_x_continuous(breaks = c(2,4,6,8,10,12,14,16))
@@ -142,6 +422,57 @@ scree_plot
 ```
 
 
+##### K-means clustering with 3 centers
+```{r}
+## 3 centers
+
+set.seed(123)
+
+km.3 <- kmeans(pcs, centers = 3)
+
+table(km.3$cluster)
+
+# kmeans cluster assignments
+km.clus3 <- km.3$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus3)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km3 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_uni_km3
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+uni.km3.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km3.sm$mean_discordant
+```
+
+
+
 ##### K-means clustering with 4 centers
 ```{r}
 ## 4 centers
@@ -160,13 +491,12 @@ colLabels(spe) <- factor(km.clus4)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km4 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.9)
+          pal = "libd_layer_colors",
+          point_size = 0.9)
 xyplot_uni_km4
 ```
 
@@ -175,43 +505,50 @@ xyplot_uni_km4
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+uni.km4.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km4.sm$mean_discordant
 ```
 
 
 
-##### K-means clustering with 7 centers
+##### K-means clustering with 6 centers
 ```{r}
-## 7 centers
+## 6 centers
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.6 <- kmeans(pcs, centers = 6)
 
-table(km.7$cluster)
+table(km.6$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus6 <- km.6$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus6)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
-xyplot_uni_km7
+xyplot_uni_km6 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_uni_km6
 ```
 
 
@@ -219,24 +556,96 @@ xyplot_uni_km7
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
-____________________________________________________________________________
+###### Smoothness Metric
+```{r}
+uni.km6.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km6.sm$mean_discordant
+```
 
 
-#### Method: Kernel, bandwidth= 0.02
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+xyplot_uni_km8
+```
+
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+uni.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+uni.km8.sm$mean_discordant
+```
+
+
+#### Uniform SM summary
+```{r}
+## SM
+SMs_uni <- matrix(c('kmeans (3 clusters)','kmeans (4 clusters)','kmeans (6 clusters)','kmeans (8 clusters)', uni.km3.sm$mean_discordant, uni.km4.sm$mean_discordant, uni.km6.sm$mean_discordant, uni.km8.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_uni) <- c('Clustering Method', 'Uniform')
+
+SMs_uni_df <- as.data.frame(SMs_uni)
+
+SMs_uni_df
+```
+
+
+________________________________________________________________________
+
+
+### Method: Kernel, bandwidth= 0.02
 
 ```{r, include = FALSE}
 # library(smoothclust)
-spe <- smoothclust(spe, method = "kernel", bandwidth = 0.02)
+spe <- smoothclust(spe1, method = "kernel", bandwidth = 0.02)
 ```
 
 ```{r}
@@ -244,9 +653,24 @@ assayNames(spe)
 ```
 
 
+#### Normalization and Feature Selection
 
-##### Dimensionality reduction
+*Normalization*
+```{r}
+spe <- logNormCounts(spe) 
+assayNames(spe)
+```
 
+*Calculate highly variable genes (HVGs) and select the top HVGs*
+```{r}
+dec <- modelGeneVar(spe) 
+top_hvgs <- getTopHVGs(dec, prop = 0.1)
+spe <- spe[top_hvgs, ]
+dim(spe)
+```
+
+
+#### Dimensionality reduction
 ```{r}
 # Principal Component Analysis
 set.seed(123)
@@ -267,6 +691,57 @@ pcs <- reducedDim(spe, "PCA")
 ```
 
 
+#### Clustering
+
+##### K-means clustering with 3 centers
+```{r}
+## 3 centers
+
+set.seed(123)
+
+km.3 <- kmeans(pcs, centers = 3)
+
+table(km.3$cluster)
+
+# kmeans cluster assignments
+km.clus3 <- km.3$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus3)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.02_km3 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.02_km3
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.02.km3.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km3.sm$mean_discordant
+```
+
+
 
 ##### K-means clustering with 4 centers
 ```{r}
@@ -286,83 +761,157 @@ colLabels(spe) <- factor(km.clus4)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km4 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.9)
-xyplot_uni_km4
+xyplot_kern.02_km4 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.02_km4
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 ```
 
 
-
-##### K-means clustering with 7 centers
+###### Smoothness Metric
 ```{r}
-## 7 centers
+kern.02.km4.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km4.sm$mean_discordant
+```
+
+
+##### K-means clustering with 6 centers
+```{r}
+## 6 centers
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.6 <- kmeans(pcs, centers = 6)
 
-table(km.7$cluster)
+table(km.6$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus6 <- km.6$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus6)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
-xyplot_uni_km7
+xyplot_kern.02_km6 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.02_km6
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.02.km6.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km6.sm$mean_discordant
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.02_km8 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+xyplot_kern.02_km8
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.02.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.02.km8.sm$mean_discordant
+```
+
+
+#### Kernel, 0.02 SM summary
+```{r}
+## SM
+SMs_kern.02 <- matrix(c('kmeans (3 clusters)','kmeans (4 clusters)','kmeans (6 clusters)','kmeans (8 clusters)', kern.02.km3.sm$mean_discordant, kern.02.km4.sm$mean_discordant, kern.02.km6.sm$mean_discordant, kern.02.km8.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.02) <- c('Clustering Method', 'Kernel, 0.02')
+
+SMs_kern.02_df <- as.data.frame(SMs_kern.02)
+
+SMs_kern.02_df
 ```
 
 
 ____________________________________________________________________________
 
 
-#### Method: Kernel, bandwidth= 0.05
+### Method: Kernel, bandwidth= 0.05
 
 ```{r, include = FALSE}
 # library(smoothclust)
-spe <- smoothclust(spe, method = "kernel", bandwidth = 0.05)
+spe <- smoothclust(spe1, method = "kernel", bandwidth = 0.05)
 ```
 
 ```{r}
@@ -370,9 +919,24 @@ assayNames(spe)
 ```
 
 
+#### Normalization and Feature Selection
 
-##### Dimensionality reduction
+*Normalization*
+```{r}
+spe <- logNormCounts(spe) 
+assayNames(spe)
+```
 
+*Calculate highly variable genes (HVGs) and select the top HVGs*
+```{r}
+dec <- modelGeneVar(spe) 
+top_hvgs <- getTopHVGs(dec, prop = 0.1)
+spe <- spe[top_hvgs, ]
+dim(spe)
+```
+
+
+#### Dimensionality reduction
 ```{r}
 # Principal Component Analysis
 set.seed(123)
@@ -393,6 +957,57 @@ pcs <- reducedDim(spe, "PCA")
 ```
 
 
+#### Clustering
+
+##### K-means clustering with 3 centers
+```{r}
+## 3 centers
+
+set.seed(123)
+
+km.3 <- kmeans(pcs, centers = 3)
+
+table(km.3$cluster)
+
+# kmeans cluster assignments
+km.clus3 <- km.3$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus3)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.05_km3 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.05_km3
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.05.km3.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km3.sm$mean_discordant
+```
+
+
 
 ##### K-means clustering with 4 centers
 ```{r}
@@ -412,83 +1027,158 @@ colLabels(spe) <- factor(km.clus4)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km4 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.9)
-xyplot_uni_km4
+xyplot_kern.05_km4 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.05_km4
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.05.km4.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km4.sm$mean_discordant
 ```
 
 
 
-##### K-means clustering with 7 centers
+##### K-means clustering with 6 centers
 ```{r}
-## 7 centers
+## 6 centers
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.6 <- kmeans(pcs, centers = 6)
 
-table(km.7$cluster)
+table(km.6$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus6 <- km.6$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus6)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
-xyplot_uni_km7
+xyplot_kern.05_km6 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.05_km6
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.05.km6.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km6.sm$mean_discordant
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.05_km8 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+xyplot_kern.05_km8
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.05.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.05.km8.sm$mean_discordant
+```
+
+
+#### Kernel, 0.05 SM summary
+```{r}
+## SM
+SMs_kern.05 <- matrix(c('kmeans (3 clusters)','kmeans (4 clusters)','kmeans (6 clusters)','kmeans (8 clusters)', kern.05.km3.sm$mean_discordant, kern.05.km4.sm$mean_discordant, kern.05.km6.sm$mean_discordant, kern.05.km8.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.05) <- c('Clustering Method', 'Kernel, 0.05')
+
+SMs_kern.05_df <- as.data.frame(SMs_kern.05)
+
+SMs_kern.05_df
 ```
 
 
 _____________________________________________________________________________
 
 
-#### Method: Kernel, bandwidth= 0.1
+### Method: Kernel, bandwidth= 0.08
 
 ```{r, include = FALSE}
 # library(smoothclust)
-spe <- smoothclust(spe, method = "kernel", bandwidth = 0.1)
+spe <- smoothclust(spe1, method = "kernel", bandwidth = 0.08)
 ```
 
 ```{r}
@@ -496,9 +1186,23 @@ assayNames(spe)
 ```
 
 
+#### Normalization and Feature Selection
 
-##### Dimensionality reduction
+*Normalization*
+```{r}
+spe <- logNormCounts(spe) 
+assayNames(spe)
+```
 
+*Calculate highly variable genes (HVGs) and select the top HVGs*
+```{r}
+dec <- modelGeneVar(spe) 
+top_hvgs <- getTopHVGs(dec, prop = 0.1)
+spe <- spe[top_hvgs, ]
+dim(spe)
+```
+
+#### Dimensionality reduction
 ```{r}
 # Principal Component Analysis
 set.seed(123)
@@ -516,6 +1220,57 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 # Vector of principal commponents for clustering 
 pcs <- reducedDim(spe, "PCA")
+```
+
+
+#### Clustering
+
+##### K-means clustering with 3 centers
+```{r}
+## 3 centers
+
+set.seed(123)
+
+km.3 <- kmeans(pcs, centers = 3)
+
+table(km.3$cluster)
+
+# kmeans cluster assignments
+km.clus3 <- km.3$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus3)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_ker.08_km3 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.08_km3
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.08.km3.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.08.km3.sm$mean_discordant
 ```
 
 
@@ -538,72 +1293,165 @@ colLabels(spe) <- factor(km.clus4)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km4 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.9)
-xyplot_uni_km4
+xyplot_ker.08_km4 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.08_km4
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.08.km4.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.08.km4.sm$mean_discordant
 ```
 
 
 
-##### K-means clustering with 7 centers
+##### K-means clustering with 6 centers
 ```{r}
-## 7 centers
+## 6 centers
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.6 <- kmeans(pcs, centers = 6)
 
-table(km.7$cluster)
+table(km.6$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus6 <- km.6$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus6)
 ```
 
 
-###### **Visualization**
-
+###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
-          palette = "libd_layer_colors",
-          size = 0.7)
-xyplot_uni_km7
+xyplot_ker.08_km6 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.9)
+xyplot_kern.08_km6
 ```
-
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.7)
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.08.km6.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.08.km6.sm$mean_discordant
+```
+
+
+
+##### K-means clustering with 8 centers
+```{r}
+## 8 centers
+
+set.seed(123)
+
+km.8 <- kmeans(pcs, centers = 8)
+
+table(km.8$cluster)
+
+# kmeans cluster assignments
+km.clus8 <- km.8$cluster
+
+# store cluster label in column 'label' in colData
+colLabels(spe) <- factor(km.clus8)
+```
+
+
+###### Visualization
+```{r}
+# plot clusters in spatial x-y coordinates
+xyplot_kern.08_km8 <- plotSpots(spe, annotate = "label", 
+          pal = "libd_layer_colors",
+          point_size = 0.7)
+xyplot_kern.08_km8
+```
+
+*Reduced Dimensionality Cluster Visualization*
+```{r}
+# plot clusters in PCA reduced dimensions
+plotDimRed(spe, type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+
+# plot clusters in UMAP reduced dimensions
+plotDimRed(spe, type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.7)
+```
+
+
+###### Smoothness Metric
+```{r}
+kern.08.km8.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=6)
+
+kern.08.km8.sm$mean_discordant
+```
+
+
+#### Kernel, 0.08 SM summary
+```{r}
+## SM
+SMs_kern.08 <- matrix(c('kmeans (3 clusters)','kmeans (4 clusters)','kmeans (6 clusters)','kmeans (8 clusters)', kern.08.km3.sm$mean_discordant, kern.08.km4.sm$mean_discordant, kern.08.km6.sm$mean_discordant, kern.08.km8.sm$mean_discordant), ncol=2, byrow=F)
+
+colnames(SMs_kern.08) <- c('Clustering Method', 'Kernel, 0.08')
+
+SMs_kern.08_df <- as.data.frame(SMs_kern.08)
+
+SMs_kern.08_df
+```
+
+
+
+### Smoothness Metric Summary
+
+```{r}
+SMs_list <- list(SMs_nonspac_df, SMs_uni_df, SMs_kern.02_df, SMs_kern.05_df, SMs_kern.08_df)
+SM_cancer <- Reduce(function(x, y) merge(x, y, ), SMs_list)
+
+cols <- c(2:6)
+SM_cancer[ , cols] <- apply(SM_cancer[ , cols,drop=F], 2,           
+                    function(x) as.numeric(as.character(x)))
+
+is.num <- sapply(SM_cancer, is.numeric)
+SM_cancer[is.num] <- lapply(SM_cancer[is.num], round, 4)
+
+SM_cancer
 ```
 
 
