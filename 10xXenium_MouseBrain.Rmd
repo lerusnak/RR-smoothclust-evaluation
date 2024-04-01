@@ -113,11 +113,25 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 nonspac.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 nonspac.km5.sm$mean_discordant
 ```
+
+*Smoothness Metric Plot*
+```{r}
+SM <- nonspac.km5.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.2, size=0.1) +
+  scale_color_gradient(low = "gray50", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
 
 
 ##### 10 Clusters
@@ -155,10 +169,23 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 nonspac.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+nonspac.km10.sm$mean_discordant
 ```
 
+
+*Smoothness Metric Plot*
 ```{r}
-nonspac.km10.sm$mean_discordant
+SM <- nonspac.km10.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.2, size=0.1) +
+  scale_color_gradient(low = "gray", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
 
@@ -198,9 +225,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 nonspac.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 nonspac.km15.sm$mean_discordant
 ```
 
@@ -209,7 +233,6 @@ nonspac.km15.sm$mean_discordant
 ##### 20 Clusters
 
 ```{r}
-
 set.seed(123)
 
 km.20 <- kmeans(pcs, centers = 20)
@@ -241,9 +264,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 nonspac.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 nonspac.km20.sm$mean_discordant
 ```
 
@@ -266,7 +286,7 @@ ___________________________________________________________________
 
 
 
-### **Run smoothclust with different parameters**
+### Spatially-aware clustering 
 
 #### Method: Uniform
 
@@ -275,7 +295,7 @@ ___________________________________________________________________
 spe <- smoothclust(spe1, method = "uniform")
 assayNames(spe)
 ```
-  -> takes about 35 minutes
+  -> takes over an hour?
   
   
 
@@ -317,42 +337,6 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 ##### K-means clustering 
 
-###### Deciding Number of clusters
-
-
-```{r}
-n_clusters <- 15
-
-# Initialize total within sum of squares error: wss
-wss <- numeric(n_clusters)
-
-set.seed(123)
-
-# Look over 1 to n possible clusters
-for (i in 1:n_clusters) {
-  # Fit the model: km.out
-  km.out <- kmeans(pcs, centers = i, nstart = 20)
-  # Save the within cluster sum of squares
-  wss[i] <- km.out$tot.withinss
-}
-```
-
-
-```{r}
-# Produce a scree plot
-wss_df <- tibble(clusters = 1:n_clusters, wss = wss)
- 
-scree_plot <- ggplot(wss_df, aes(x = clusters, y = wss, group = 1)) +
-    geom_point(size = 4)+
-    geom_line() +
-    xlab('Number of clusters') +
-    scale_x_continuous(breaks = c(2,4,6,8,10,12,14,16))
-scree_plot
-```
-
-*Does not really help very much*
-
-
 ###### 5 Clusters
 
 ```{r}
@@ -375,14 +359,14 @@ colLabels(spe) <- factor(km.clus5)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 ```
 
 
@@ -404,9 +388,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 uni.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 uni.km5.sm$mean_discordant
 ```
 
@@ -440,14 +421,14 @@ colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dod
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 ```
 
 *X-Y  Spatial Plot*
@@ -458,7 +439,7 @@ coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
 ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.3, 0.2) +
+  geom_point(alpha = 0.2, size = 0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
@@ -468,10 +449,22 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 uni.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+uni.km10.sm$mean_discordant
 ```
 
+*Smoothness Metric Plot*
 ```{r}
-uni.km10.sm$mean_discordant
+SM <- uni.km10.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.7, size=0.1) +
+  scale_color_gradient(low = "gray", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
 
@@ -516,9 +509,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 uni.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 uni.km15.sm$mean_discordant
 ```
 
@@ -534,7 +524,7 @@ set.seed(123)
 
 km.20 <- kmeans(pcs, centers = 20)
 
-table(km.10$cluster)
+table(km.20$cluster)
 
 # kmeans cluster assignments
 km.clus20 <- km.20$cluster
@@ -554,7 +544,7 @@ coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
 ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.3, 0.2) +
+  geom_point(alpha = 0.2, size = 0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
 ```
@@ -564,9 +554,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 uni.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 uni.km20.sm$mean_discordant
 ```
 
@@ -632,7 +619,7 @@ pcs <- reducedDim(spe, "PCA")
 ##### Clustering on subsample 
 
 ##### Graph-based
-
+*Slow and ~memory-intensive*
 ```{r}
 set.seed(123)
 k <- 30
@@ -660,9 +647,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 sub.graph.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 sub.graph.sm$mean_discordant
 ```
 
@@ -704,10 +688,22 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 sub.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+sub.km5.sm$mean_discordant
 ```
 
+*X-Y  Spatial Plot*
 ```{r}
-sub.km5.sm$mean_discordant
+SM <- sub.km5.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.5, size=1) +
+  scale_color_gradient(low = "gray50", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
 
@@ -717,7 +713,6 @@ __________________________________________________
 ###### 10 Clusters
 
 ```{r}
-
 set.seed(123)
 
 km.10 <- kmeans(pcs, centers = 10)
@@ -749,11 +744,25 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 sub.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 sub.km10.sm$mean_discordant
 ```
+
+*Smoothness Metric Plot*
+```{r}
+SM <- sub.km10.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.5, size=1) +
+  scale_color_gradient(low = "gray", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
+
 
 _____________________________________________________________
 
@@ -793,9 +802,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 sub.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 sub.km15.sm$mean_discordant
 ```
 
@@ -806,7 +812,6 @@ __________________________________________________________
 ###### 20 Clusters
 
 ```{r}
-
 set.seed(123)
 
 km.20 <- kmeans(pcs, centers = 20)
@@ -878,7 +883,10 @@ spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.02)
 assayNames(spe)
 ```
 
-  
+```{r}
+summary(counts(spe)[1:8765823])
+```
+
 
 ##### Normalization
 
@@ -942,14 +950,14 @@ colLabels(spe) <- factor(km.clus5)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 ```
 
 
@@ -971,11 +979,25 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern02.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern02.km5.sm$mean_discordant
 ```
+
+*X-Y  Spatial Plot*
+```{r}
+SM <- kern02.km5.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.5, size=1) +
+  scale_color_gradient(low = "gray50", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
+```
+
 
 
 __________________________________________________________________
@@ -1007,14 +1029,14 @@ colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dod
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 ```
 
 *X-Y  Spatial Plot*
@@ -1035,9 +1057,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern02.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 kern02.km10.sm$mean_discordant
 ```
 
@@ -1080,9 +1099,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern02.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 kern02.km15.sm$mean_discordant
 ```
 
@@ -1126,9 +1142,6 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern02.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
-
-```{r}
 kern02.km20.sm$mean_discordant
 ```
 
@@ -1228,14 +1241,14 @@ colLabels(spe) <- factor(km.clus5)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 ```
 
 
@@ -1258,9 +1271,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern05.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern05.km5.sm$mean_discordant
 ```
 
@@ -1295,14 +1306,14 @@ colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dod
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 ```
 
 *X-Y  Spatial Plot*
@@ -1324,10 +1335,24 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern05.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
+
+kern05.km10.sm$mean_discordant
 ```
 
+
+*Smoothness Metric Plot*
 ```{r}
-kern05.km10.sm$mean_discordant
+SM <- kern05.km10.sm$n_discordant
+coldat_df <- as.data.frame(colData(spe))
+
+coldat_df <- coldat_df %>%
+  mutate(y_reverse = -1*y_location)
+
+ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
+  geom_point(alpha = 0.5, size=1) +
+  scale_color_gradient(low = "gray", high = "red1") +
+  theme_bw() +
+  theme(axis.text = element_blank(), axis.title = element_blank())
 ```
 
 
@@ -1369,9 +1394,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern05.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern05.km15.sm$mean_discordant
 ```
 
@@ -1415,9 +1438,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern05.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern05.km20.sm$mean_discordant
 ```
 
@@ -1515,14 +1536,14 @@ colLabels(spe) <- factor(km.clus5)
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = "libd_layer_colors",
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = "libd_layer_colors",
+           point_size = 0.5)
 ```
 
 
@@ -1544,9 +1565,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern08.km5.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern08.km5.sm$mean_discordant
 ```
 
@@ -1580,14 +1599,14 @@ colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dod
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "PCA", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
-           annotate = "label", palette = colors,
-           size = 0.5)
+plotDimRed(spe, plot_type = "UMAP", 
+           annotate = "label", pal = colors,
+           point_size = 0.5)
 ```
 
 *X-Y  Spatial Plot*
@@ -1610,9 +1629,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern08.km10.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern08.km10.sm$mean_discordant
 ```
 
@@ -1655,9 +1672,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern08.km15.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern08.km15.sm$mean_discordant
 ```
 
@@ -1701,9 +1716,7 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
 
 ```{r}
 kern08.km20.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels = as.numeric(colData(spe)$label), k=10)
-```
 
-```{r}
 kern08.km20.sm$mean_discordant
 ```
 
@@ -1733,27 +1746,16 @@ __________________________________________________________________
 
 ```{r}
 SMs_list <- list(SMs_nonspac_df, SMs_uni_df, SMs_sub_df, SMs_kern.02_df, SMs_kern.05_df, SMs_kern.08_df)
-SM_DLPFC <- Reduce(function(x, y) merge(x, y, ), SMs_list)
+SM_mousebrain <- Reduce(function(x, y) merge(x, y, ), SMs_list)
 
-cols <- c(2:6)
-SM_DLPFC[ , cols] <- apply(SM_DLPFC[ , cols,drop=F], 2,           
+cols <- c(2:7)
+SM_mousebrain[ , cols] <- apply(SM_mousebrain[ , cols,drop=F], 2,           
                     function(x) as.numeric(as.character(x)))
 
-is.num <- sapply(SM_DLPFC, is.numeric)
-SM_DLPFC[is.num] <- lapply(SM_DLPFC[is.num], round, 4)
+is.num <- sapply(SM_mousebrain, is.numeric)
+SM_mousebrain[is.num] <- lapply(SM_mousebrain[is.num], round, 4)
 
-SM_DLPFC
+SM_mousebrain
 ```
-
-
-*TO DO*
-
-  + run everything
-  + create summary table with all smoothing metrics
-  + smoothing metrics for DLPFC
-  + Entire workflow for Breast Cancer
-
-
-
 
 
