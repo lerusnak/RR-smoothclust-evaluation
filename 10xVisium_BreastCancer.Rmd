@@ -38,9 +38,9 @@ _________________________________________________________________________
 dir <- file.path("C:/Users/lerus/OneDrive/Documents/BU-AB/ResearchRotation/10xVisium")
   
 sample_ids <- c("Visium_Human_Breast_Cancer")
-samples <- file.path(dir, sample_ids)
+samples <- file.path(dir, sample_ids, "outs")
 
-spe1 <- read10xVisium(samples)
+spe1 <- read10xVisium(samples,)
 
 # tabulate number of spots mapped to tissue
 cd <- colData(spe1)
@@ -87,11 +87,11 @@ dim(spe)
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts")
 
 # UMAP on top 50 PCs -> for visualization
 set.seed(123)
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 dim(reducedDim(spe, "UMAP"))
@@ -110,15 +110,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.3 <- kmeans(pcs, centers = 3)
+km.3.nonspac <- kmeans(pcs, centers = 3)
 
-table(km.3$cluster)
+table(km.3.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus3 <- km.4$cluster
+km.clus3.nonspac <- km.3$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus3)
+colLabels(spe) <- factor(km.clus3.nonspac)
 ```
 
 
@@ -129,6 +129,7 @@ xyplot_nonspac_km3 <- plotSpots(spe, annotate = "label",
           pal = "libd_layer_colors",
           point_size = 0.9)
 xyplot_nonspac_km3
+## feature names error probably due to only 1 rowData name - not an option in plotSpots code ##
 ```
 
 
@@ -156,15 +157,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.4 <- kmeans(pcs, centers = 4)
+km.4.nonspac <- kmeans(pcs, centers = 4)
 
-table(km.4$cluster)
+table(km.4.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus4 <- km.4$cluster
+km.clus4.nonspac <- km.4.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus4)
+colLabels(spe) <- factor(km.clus4.nonspac)
 ```
 
 
@@ -215,15 +216,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.6 <- kmeans(pcs, centers = 6)
+km.6.nonspac <- kmeans(pcs, centers = 6)
 
-table(km.6$cluster)
+table(km.6.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.6$cluster
+km.clus6.nonspac <- km.6.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus6)
+colLabels(spe) <- factor(km.clus6.nonspac)
 ```
 
 
@@ -274,15 +275,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.nonspac <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.nonspac <- km.8.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.nonspac)
 ```
 
 
@@ -428,15 +429,15 @@ scree_plot
 
 set.seed(123)
 
-km.3 <- kmeans(pcs, centers = 3)
+km.3.uni <- kmeans(pcs, centers = 3)
 
-table(km.3$cluster)
+table(km.3.uni$cluster)
 
 # kmeans cluster assignments
-km.clus3 <- km.3$cluster
+km.clus3.uni <- km.3.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus3)
+colLabels(spe) <- factor(km.clus3.uni)
 ```
 
 
@@ -479,15 +480,15 @@ uni.km3.sm$mean_discordant
 
 set.seed(123)
 
-km.4 <- kmeans(pcs, centers = 4)
+km.4.uni <- kmeans(pcs, centers = 4)
 
-table(km.4$cluster)
+table(km.4.uni$cluster)
 
 # kmeans cluster assignments
-km.clus4 <- km.4$cluster
+km.clus4.uni <- km.4.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus4)
+colLabels(spe) <- factor(km.clus4.uni)
 ```
 
 
@@ -530,15 +531,15 @@ uni.km4.sm$mean_discordant
 
 set.seed(123)
 
-km.6 <- kmeans(pcs, centers = 6)
+km.6.uni <- kmeans(pcs, centers = 6)
 
-table(km.6$cluster)
+table(km.6.uni$cluster)
 
 # kmeans cluster assignments
-km.clus6 <- km.6$cluster
+km.clus6.uni <- km.6.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus6)
+colLabels(spe) <- factor(km.clus6.uni)
 ```
 
 
@@ -581,15 +582,15 @@ uni.km6.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.uni <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.uni$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.uni <- km.8.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.uni)
 ```
 
 
@@ -674,11 +675,11 @@ dim(spe)
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts")
 
 # UMAP on top 50 PCs -> for visualization
 set.seed(123)
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 dim(reducedDim(spe, "UMAP"))
@@ -699,15 +700,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.3 <- kmeans(pcs, centers = 3)
+km.3.kern02 <- kmeans(pcs, centers = 3)
 
-table(km.3$cluster)
+table(km.3.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus3 <- km.3$cluster
+km.clus3.kern02 <- km.3.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus3)
+colLabels(spe) <- factor(km.clus3.kern02)
 ```
 
 
@@ -749,15 +750,15 @@ kern.02.km3.sm$mean_discordant
 
 set.seed(123)
 
-km.4 <- kmeans(pcs, centers = 4)
+km.4.kern02 <- kmeans(pcs, centers = 4)
 
-table(km.4$cluster)
+table(km.4.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus4 <- km.4$cluster
+km.clus4.kern02 <- km.4.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus4)
+colLabels(spe) <- factor(km.clus4.kern02)
 ```
 
 
@@ -798,15 +799,15 @@ kern.02.km4.sm$mean_discordant
 
 set.seed(123)
 
-km.6 <- kmeans(pcs, centers = 6)
+km.6.kern02 <- kmeans(pcs, centers = 6)
 
-table(km.6$cluster)
+table(km.6.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus6 <- km.6$cluster
+km.clus6.kern02 <- km.6.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus6)
+colLabels(spe) <- factor(km.clus6.kern02)
 ```
 
 
@@ -848,15 +849,15 @@ kern.02.km6.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern02 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern02 <- km.8.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern02)
 ```
 
 
@@ -940,11 +941,11 @@ dim(spe)
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts")
 
 # UMAP on top 50 PCs -> for visualization
 set.seed(123)
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 dim(reducedDim(spe, "UMAP"))
@@ -965,15 +966,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.3 <- kmeans(pcs, centers = 3)
+km.3.kern05 <- kmeans(pcs, centers = 3)
 
-table(km.3$cluster)
+table(km.3.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus3 <- km.3$cluster
+km.clus3.kern05 <- km.3.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus3)
+colLabels(spe) <- factor(km.clus3.kern05)
 ```
 
 
@@ -1015,15 +1016,15 @@ kern.05.km3.sm$mean_discordant
 
 set.seed(123)
 
-km.4 <- kmeans(pcs, centers = 4)
+km.4.kern05 <- kmeans(pcs, centers = 4)
 
-table(km.4$cluster)
+table(km.4.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus4 <- km.4$cluster
+km.clus4.kern05 <- km.4.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus4)
+colLabels(spe) <- factor(km.clus4.kern05)
 ```
 
 
@@ -1065,15 +1066,15 @@ kern.05.km4.sm$mean_discordant
 
 set.seed(123)
 
-km.6 <- kmeans(pcs, centers = 6)
+km.6.kern05 <- kmeans(pcs, centers = 6)
 
-table(km.6$cluster)
+table(km.6.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus6 <- km.6$cluster
+km.clus6.kern05 <- km.6.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus6)
+colLabels(spe) <- factor(km.clus6.kern05)
 ```
 
 
@@ -1115,15 +1116,15 @@ kern.05.km6.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern05 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern05 <- km.8.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern05)
 ```
 
 
@@ -1202,15 +1203,16 @@ spe <- spe[top_hvgs, ]
 dim(spe)
 ```
 
+
 #### Dimensionality reduction
 ```{r}
 # Principal Component Analysis
 set.seed(123)
-spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts_smooth")
+spe <- runPCA(spe, subset_row = top_hvgs, exprs_values = "logcounts")
 
 # UMAP on top 50 PCs -> for visualization
 set.seed(123)
-spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts_smooth")
+spe <-  runUMAP(spe, dimred= "PCA", exprs_values = "logcounts")
 
 dim(reducedDim(spe, "PCA"))
 dim(reducedDim(spe, "UMAP"))
@@ -1231,22 +1233,22 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.3 <- kmeans(pcs, centers = 3)
+km.3.kern08 <- kmeans(pcs, centers = 3)
 
-table(km.3$cluster)
+table(km.3.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus3 <- km.3$cluster
+km.clus3.kern08 <- km.3.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus3)
+colLabels(spe) <- factor(km.clus3.kern08)
 ```
 
 
 ###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_ker.08_km3 <- plotSpots(spe, annotate = "label", 
+xyplot_kern.08_km3 <- plotSpots(spe, annotate = "label", 
           pal = "libd_layer_colors",
           point_size = 0.9)
 xyplot_kern.08_km3
@@ -1281,22 +1283,22 @@ kern.08.km3.sm$mean_discordant
 
 set.seed(123)
 
-km.4 <- kmeans(pcs, centers = 4)
+km.4.kern08 <- kmeans(pcs, centers = 4)
 
-table(km.4$cluster)
+table(km.4.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus4 <- km.4$cluster
+km.clus4.kern08 <- km.4.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus4)
+colLabels(spe) <- factor(km.clus4.kern08)
 ```
 
 
 ###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_ker.08_km4 <- plotSpots(spe, annotate = "label", 
+xyplot_kern.08_km4 <- plotSpots(spe, annotate = "label", 
           pal = "libd_layer_colors",
           point_size = 0.9)
 xyplot_kern.08_km4
@@ -1331,22 +1333,22 @@ kern.08.km4.sm$mean_discordant
 
 set.seed(123)
 
-km.6 <- kmeans(pcs, centers = 6)
+km.6.kern08 <- kmeans(pcs, centers = 6)
 
-table(km.6$cluster)
+table(km.6.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus6 <- km.6$cluster
+km.clus6.kern08 <- km.6.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus6)
+colLabels(spe) <- factor(km.clus6.kern08)
 ```
 
 
 ###### Visualization
 ```{r}
 # plot clusters in spatial x-y coordinates
-xyplot_ker.08_km6 <- plotSpots(spe, annotate = "label", 
+xyplot_kern.08_km6 <- plotSpots(spe, annotate = "label", 
           pal = "libd_layer_colors",
           point_size = 0.9)
 xyplot_kern.08_km6
@@ -1381,15 +1383,15 @@ kern.08.km6.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern08 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern08 <- km.8.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern08)
 ```
 
 
@@ -1455,3 +1457,197 @@ SM_cancer
 ```
 
 
+
+
+### Compositional Analysis
+
+#### Uniform 3 Clusters
+
+*3 Nonspatial clusters*
+```{r}
+length(km.clus3.uni)
+length(km.clus3.nonspac)
+
+# check cluster frequencies
+table(km.clus3.uni)
+table(km.clus3.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.uni))
+kmeans_labels <- sort(unique(km.clus3.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.uni)
+kmeans_clus <- as.factor(km.clus3.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+
+*4 Nonspatial clusters*
+```{r}
+length(km.clus3.uni)
+length(km.clus4.nonspac)
+
+# check cluster frequencies
+table(km.clus3.uni)
+table(km.clus4.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.uni))
+kmeans_labels <- sort(unique(km.clus4.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.uni)
+kmeans_clus <- as.factor(km.clus4.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+*Uniform 6 clusters*
+```{r}
+length(km.clus6.uni)
+length(km.clus3.nonspac)
+
+# check cluster frequencies
+table(km.clus6.uni)
+table(km.clus3.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus6.uni))
+kmeans_labels <- sort(unique(km.clus3.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus6.uni)
+kmeans_clus <- as.factor(km.clus3.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
