@@ -115,7 +115,7 @@ km.3.nonspac <- kmeans(pcs, centers = 3)
 table(km.3.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus3.nonspac <- km.3$cluster
+km.clus3.nonspac <- km.3.nonspac$cluster
 
 # store cluster label in column 'label' in colData
 colLabels(spe) <- factor(km.clus3.nonspac)
@@ -145,7 +145,7 @@ nonspac.km3.sm$mean_discordant
 colData(spe)$SM <- nonspac.km3.sm$n_discordant
 plotSpots(spe, annotate = "SM", 
           pal = c("gray", "red"),
-          point_size = 1)
+          point_size = 0.5)
 ```
 
 
@@ -182,12 +182,12 @@ xyplot_nonspac_km4
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -241,12 +241,12 @@ xyplot_uni_km7
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -300,12 +300,12 @@ xyplot_uni_km8
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -362,13 +362,13 @@ assayNames(spe)
 
 *Normalization*
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
 *Calculate highly variable genes (HVGs) and select the top HVGs*
 ```{r}
-dec <- modelGeneVar(spe) 
+dec <- modelGeneVar(spe, assay.type = "logcounts") 
 top_hvgs <- getTopHVGs(dec, prop = 0.1)
 spe <- spe[top_hvgs, ]
 dim(spe)
@@ -454,12 +454,12 @@ xyplot_uni_km3
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -505,12 +505,12 @@ xyplot_uni_km4
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -556,12 +556,12 @@ xyplot_uni_km6
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -607,12 +607,12 @@ xyplot_uni_km8
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -658,7 +658,7 @@ assayNames(spe)
 
 *Normalization*
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -724,12 +724,12 @@ xyplot_kern.02_km3
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -774,12 +774,12 @@ xyplot_kern.02_km4
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -823,12 +823,12 @@ xyplot_kern.02_km6
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -873,12 +873,12 @@ xyplot_kern.02_km8
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -924,7 +924,7 @@ assayNames(spe)
 
 *Normalization*
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -990,12 +990,12 @@ xyplot_kern.05_km3
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1040,12 +1040,12 @@ xyplot_kern.05_km4
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1090,12 +1090,12 @@ xyplot_kern.05_km6
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1140,12 +1140,12 @@ xyplot_kern.05_km8
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1191,7 +1191,7 @@ assayNames(spe)
 
 *Normalization*
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -1257,12 +1257,12 @@ xyplot_kern.08_km3
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1307,12 +1307,12 @@ xyplot_kern.08_km4
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1357,12 +1357,12 @@ xyplot_kern.08_km6
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1407,12 +1407,12 @@ xyplot_kern.08_km8
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
-plotDimRed(spe, type = "PCA", 
+plotDimRed(spe, plot_type = "PCA", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
-plotDimRed(spe, type = "UMAP", 
+plotDimRed(spe, plot_type = "UMAP", 
            annotate = "label", pal = "libd_layer_colors",
            point_size = 0.7)
 ```
@@ -1460,6 +1460,11 @@ SM_cancer
 
 
 ### Compositional Analysis
+
+```{r}
+library(reshape)
+```
+
 
 #### Uniform 3 Clusters
 
@@ -1590,7 +1595,458 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
 ```
 
 
-*Uniform 6 clusters*
+*6 Nonspatial clusters*
+```{r}
+length(km.clus3.uni)
+length(km.clus6.nonspac)
+
+# check cluster frequencies
+table(km.clus3.uni)
+table(km.clus6.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.uni))
+kmeans_labels <- sort(unique(km.clus6.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.uni)
+kmeans_clus <- as.factor(km.clus6.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+
+*8 Nonspatial clusters*
+```{r}
+length(km.clus3.uni)
+length(km.clus8.nonspac)
+
+# check cluster frequencies
+table(km.clus3.uni)
+table(km.clus8.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.uni))
+kmeans_labels <- sort(unique(km.clus8.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.uni)
+kmeans_clus <- as.factor(km.clus8.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+_____________________________________________________________________
+
+
+#### Kernel, 0.02 3 Clusters
+
+*3 Nonspatial clusters*
+```{r}
+length(km.clus3.kern02)
+length(km.clus3.nonspac)
+
+# check cluster frequencies
+table(km.clus3.kern02)
+table(km.clus3.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.kern02))
+kmeans_labels <- sort(unique(km.clus3.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.kern02)
+kmeans_clus <- as.factor(km.clus3.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+
+*4 Nonspatial clusters*
+```{r}
+length(km.clus3.kern02)
+length(km.clus4.nonspac)
+
+# check cluster frequencies
+table(km.clus3.kern02)
+table(km.clus4.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.kern02))
+kmeans_labels <- sort(unique(km.clus4.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.kern02)
+kmeans_clus <- as.factor(km.clus4.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+*6 Nonspatial clusters*
+```{r}
+length(km.clus3.kern02)
+length(km.clus6.nonspac)
+
+# check cluster frequencies
+table(km.clus3.kern02)
+table(km.clus6.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.kern02))
+kmeans_labels <- sort(unique(km.clus6.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.kern02)
+kmeans_clus <- as.factor(km.clus6.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+
+*8 Nonspatial clusters*
+```{r}
+length(km.clus3.kern02)
+length(km.clus8.nonspac)
+
+# check cluster frequencies
+table(km.clus3.kern02)
+table(km.clus8.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus3.kern02))
+kmeans_labels <- sort(unique(km.clus8.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus3.kern02)
+kmeans_clus <- as.factor(km.clus8.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+
+_____________________________________________________________________
+
+
+
+#### Nonspatial 3 Clusters
+
+*4 Uniformclusters*
+```{r}
+length(km.clus4.uni)
+length(km.clus3.nonspac)
+
+# check cluster frequencies
+table(km.clus4.uni)
+table(km.clus3.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus4.uni))
+kmeans_labels <- sort(unique(km.clus3.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus4.uni)
+kmeans_clus <- as.factor(km.clus3.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
+
+*6 Uniform clusters*
 ```{r}
 length(km.clus6.uni)
 length(km.clus3.nonspac)
@@ -1641,7 +2097,6 @@ rowSums(res)
 
 ```{r}
 df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
-df
 ```
 
 
@@ -1651,3 +2106,67 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
   geom_bar(stat="identity") +
   theme_bw()
 ```
+
+
+
+*8 Nonspatial clusters*
+```{r}
+length(km.clus8.uni)
+length(km.clus3.nonspac)
+
+# check cluster frequencies
+table(km.clus8.uni)
+table(km.clus3.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus8.uni))
+kmeans_labels <- sort(unique(km.clus3.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus8.uni)
+kmeans_clus <- as.factor(km.clus3.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+
