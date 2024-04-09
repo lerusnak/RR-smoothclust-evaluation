@@ -371,7 +371,7 @@ assayNames(spe)
 ##### Normalization
 
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -795,7 +795,7 @@ assayNames(spe)
 ##### Normalization
 
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -1219,7 +1219,7 @@ assayNames(spe)
 ##### Normalization
 
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -1606,7 +1606,7 @@ assayNames(spe)
 ##### Normalization
 
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
@@ -1993,7 +1993,7 @@ assayNames(spe)
 ##### Normalization
 
 ```{r}
-spe <- logNormCounts(spe) 
+spe <- logNormCounts(spe, assay.type = "counts_smooth") 
 assayNames(spe)
 ```
 
