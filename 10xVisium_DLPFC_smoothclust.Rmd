@@ -88,20 +88,20 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.7.nonspac <- kmeans(pcs, centers = 7)
 
-table(km.7$cluster)
+table(km.7.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus7.nonspac <- km.7.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus7.nonspac)
 ```
 
 *X-Y  Spatial Plot*
 ```{r}
-plotSpots(spe, annotate = "label", 
+xyplot_nonspac_km7 <- plotSpots(spe, annotate = "label", 
           pal = "libd_layer_colors",
           point_size = 0.7)
 ```
@@ -110,7 +110,7 @@ plotSpots(spe, annotate = "label",
 
 ```{r}
 # library(mclust)
-ARI_nonspac_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_nonspac_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7.nonspac)
 ARI_nonspac_km.clus7
 ```
 
@@ -118,7 +118,7 @@ ARI_nonspac_km.clus7
 
 ```{r}
 # library(randnet)
-NMI_nonspac_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7)
+NMI_nonspac_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7.nonspac)
 NMI_nonspac_km.clus7
 ```
 
@@ -147,20 +147,20 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.nonspac <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.nonspac <- km.8.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.nonspac)
 ```
 
 *X-Y  Spatial Plot*
 ```{r}
-plotSpots(spe, annotate = "label", 
+xyplot_nonspac_km8 <- plotSpots(spe, annotate = "label", 
           pal = "libd_layer_colors",
           point_size = 0.7)
 ```
@@ -169,7 +169,7 @@ plotSpots(spe, annotate = "label",
 
 ```{r}
 # library(mclust)
-ARI_nonspac_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus8)
+ARI_nonspac_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus8.nonspac)
 ARI_nonspac_km.clus8
 ```
 
@@ -177,7 +177,7 @@ ARI_nonspac_km.clus8
 
 ```{r}
 # library(randnet)
-NMI_nonspac_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_nonspac_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8.nonspac)
 NMI_nonspac_km.clus8
 ```
 
@@ -205,22 +205,23 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.nonspac <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.nonspac <- km.10.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.nonspac)
 ```
 
 *X-Y  Spatial Plot*
 ```{r}
-plotSpots(spe, annotate = "label", 
+xyplot_nonspac_km10 <- plotSpots(spe, annotate = "label", 
           pal = colors,
           point_size = 0.7)
+xyplot_nonspac_km10
 ```
 
 
@@ -228,7 +229,7 @@ plotSpots(spe, annotate = "label",
 
 ```{r}
 # library(mclust)
-ARI_nonspac_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus10)
+ARI_nonspac_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus10.nonspac)
 ARI_nonspac_km.clus10
 ```
 
@@ -236,7 +237,7 @@ ARI_nonspac_km.clus10
 
 ```{r}
 # library(randnet)
-NMI_nonspac_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_nonspac_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10.nonspac)
 NMI_nonspac_km.clus10
 ```
 
@@ -267,16 +268,16 @@ set.seed(123)
 k <- 45
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
-g_clus <- g_walk$membership
-table(g_clus)
+g_clus.nonspac <- g_walk$membership
+table(g_clus.nonspac)
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(g_clus)
+colLabels(spe) <- factor(g_clus.nonspac)
 ```
 
 *X-Y  Spatial Plot*
 ```{r}
-plotSpots(spe, annotate = "label", 
+xyplot_nonspac_graph <- plotSpots(spe, annotate = "label", 
           pal = colors,
           point_size = 0.7)
 ```
@@ -286,7 +287,7 @@ plotSpots(spe, annotate = "label",
 
 ```{r}
 # library(mclust)
-ARI_nonspac_graph <- adjustedRandIndex(colData(spe)$ground_truth,g_clus)
+ARI_nonspac_graph <- adjustedRandIndex(colData(spe)$ground_truth,g_clus.nonspac)
 ARI_nonspac_graph
 ```
 
@@ -294,7 +295,7 @@ ARI_nonspac_graph
 
 ```{r}
 # library(randnet)
-NMI_nonspac_graph <- NMI(colData(spe)$ground_truth, g_clus)
+NMI_nonspac_graph <- NMI(colData(spe)$ground_truth, g_clus.nonspac)
 NMI_nonspac_graph
 ```
 
@@ -356,7 +357,7 @@ SMs_nonspac_df
 _________________________________________________________________________
 
 
-### Spatially aware clustering workflow (*Run smoothclust with different parameters*)
+### Spatially aware clustering workflow 
 
 #### Method: Uniform
 
@@ -421,15 +422,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.7.uni <- kmeans(pcs, centers = 7)
 
-table(km.7$cluster)
+table(km.7.uni$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus7.uni <- km.7.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus7.uni)
 ```
 
 ###### **Visualization**
@@ -437,12 +438,12 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km7 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 
 # plot ground truth labels in spatial coordinates
 xyplot_groundtruth <- plotSpots(spe, annotate = "ground_truth", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7) 
 
 gridExtra::grid.arrange(xyplot_uni_km7, xyplot_groundtruth, ncol=2)
@@ -454,12 +455,12 @@ gridExtra::grid.arrange(xyplot_uni_km7, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -468,7 +469,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_uni_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_uni_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7.uni)
 ARI_uni_km.clus7
 ```
 
@@ -476,7 +477,7 @@ ARI_uni_km.clus7
 
 ```{r}
 # library(randnet)
-NMI_uni_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7)
+NMI_uni_km.clus7 <- NMI(colData(spe)$ground_truth, km.clus7.uni)
 NMI_uni_km.clus7
 ```
 
@@ -505,15 +506,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.uni <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.uni$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.uni <- km.8.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.uni)
 ```
 
 ###### **Visualization**
@@ -521,7 +522,7 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.8)
 
 gridExtra::grid.arrange(xyplot_uni_km8, xyplot_groundtruth, ncol=2)
@@ -531,12 +532,12 @@ gridExtra::grid.arrange(xyplot_uni_km8, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -545,7 +546,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_uni_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_uni_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8.uni)
 ARI_uni_km.clus8
 ```
 
@@ -553,7 +554,7 @@ ARI_uni_km.clus8
 
 ```{r}
 # library(randnet)
-NMI_uni_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_uni_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8.uni)
 NMI_uni_km.clus8
 ```
 
@@ -581,15 +582,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.uni <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.uni$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.uni <- km.10.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.uni)
 ```
 
 ###### **Visualization**
@@ -622,7 +623,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_uni_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_uni_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10.uni)
 ARI_uni_km.clus10
 ```
 
@@ -630,7 +631,7 @@ ARI_uni_km.clus10
 
 ```{r}
 # library(randnet)
-NMI_uni_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_uni_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10.uni)
 NMI_uni_km.clus10 
 ```
 
@@ -660,11 +661,11 @@ set.seed(123)
 k <- 50
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
-g_clus <- g_walk$membership
-table(g_clus)
+g_clus.uni <- g_walk$membership
+table(g_clus.uni)
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(g_clus)
+colLabels(spe) <- factor(g_clus.uni)
 ```
 
 ###### **Visualization**
@@ -696,7 +697,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_uni_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_uni_graph <- adjustedRandIndex(colData(spe)$ground_truth, g_clus.uni)
 ARI_uni_graph
 ```
 
@@ -705,7 +706,7 @@ ARI_uni_graph
 
 ```{r}
 # library(randnet)
-NMI_uni_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_uni_graph <- NMI(colData(spe)$ground_truth, g_clus.uni)
 NMI_uni_graph
 ```
 
@@ -847,15 +848,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.7.kern02 <- kmeans(pcs, centers = 7)
 
-table(km.7$cluster)
+table(km.7.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus7.kern02 <- km.7.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus7.kern02)
 ```
 
 ###### **Visualization**
@@ -863,7 +864,7 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km7 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.02_km7, xyplot_groundtruth, ncol=2)
@@ -874,12 +875,12 @@ gridExtra::grid.arrange(xyplot_kern.02_km7, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -888,7 +889,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.02_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.02_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7.kern02)
 ARI_kern.02_km.clus7
 ```
 
@@ -896,7 +897,7 @@ ARI_kern.02_km.clus7
 
 ```{r}
 # library(randnet)
-NMI_kern.02_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.02_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7.kern02)
 NMI_kern.02_km.clus7
 ```
 
@@ -927,15 +928,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern02 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern02 <- km.8.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern02)
 ```
 
 ###### **Visualization**
@@ -943,7 +944,7 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km8 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.02_km8, xyplot_groundtruth, ncol=2)
@@ -954,12 +955,12 @@ gridExtra::grid.arrange(xyplot_kern.02_km8, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -968,7 +969,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.02_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.02_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8.kern02)
 ARI_kern.02_km.clus8
 ```
 
@@ -976,7 +977,7 @@ ARI_kern.02_km.clus8
 
 ```{r}
 # library(randnet)
-NMI_kern.02_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.02_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8.kern02)
 NMI_kern.02_km.clus8
 ```
 
@@ -1004,15 +1005,15 @@ plotSpots(spe, annotate = "SM",
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern02 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern02 <- km.10.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern02)
 ```
 
 ###### **Visualizaton**
@@ -1045,7 +1046,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.02_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.02_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10.kern02)
 ARI_kern.02_km.clus10
 ```
 
@@ -1053,7 +1054,7 @@ ARI_kern.02_km.clus10
 
 ```{r}
 # library(randnet)
-NMI_kern.02_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.02_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10.kern02)
 NMI_kern.02_km.clus10
 ```
 
@@ -1082,11 +1083,11 @@ set.seed(123)
 k <- 48
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
-g_clus <- g_walk$membership
-table(g_clus)
+g_clus.kern02 <- g_walk$membership
+table(g_clus.kern02)
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(g_clus)
+colLabels(spe) <- factor(g_clus.kern02)
 ```
 
 ###### **Visualizaton**
@@ -1119,7 +1120,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.02_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.02_graph <- adjustedRandIndex(colData(spe)$ground_truth, g_clus.kern02)
 ARI_kern.02_graph
 ```
 
@@ -1127,7 +1128,7 @@ ARI_kern.02_graph
 
 ```{r}
 # library(randnet)
-NMI_kern.02_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.02_graph <- NMI(colData(spe)$ground_truth, g_clus.kern02)
 NMI_kern.02_graph
 ```
 
@@ -1270,15 +1271,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.7.kern04 <- kmeans(pcs, centers = 7)
 
-table(km.7$cluster)
+table(km.7.kern04$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus7.kern04 <- km.7.kern04$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus7.kern04)
 ```
 
 ###### **Visualization**
@@ -1286,7 +1287,7 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km7 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 
 gridExtra::grid.arrange(xyplot_kern.04_km7, xyplot_groundtruth, ncol=2)
@@ -1297,12 +1298,12 @@ gridExtra::grid.arrange(xyplot_kern.04_km7, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1311,7 +1312,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.04_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.04_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7.kern04)
 ARI_kern.04_km.clus7
 ```
 
@@ -1319,7 +1320,7 @@ ARI_kern.04_km.clus7
 
 ```{r}
 # library(randnet)
-NMI_kern.04_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.04_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7.kern04)
 NMI_kern.04_km.clus7
 ```
 
@@ -1339,15 +1340,15 @@ kern.04.km7.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern04 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern04$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern04 <- km.8.kern04$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern04)
 ```
 
 ###### **Visualization**
@@ -1355,7 +1356,7 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.04_km8 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.04_km8, xyplot_groundtruth, ncol=2)
 ```
@@ -1365,12 +1366,12 @@ gridExtra::grid.arrange(xyplot_kern.04_km8, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1379,7 +1380,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.04_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.04_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8.kern04)
 ARI_kern.04_km.clus8
 ```
 
@@ -1387,7 +1388,7 @@ ARI_kern.04_km.clus8
 
 ```{r}
 # library(randnet)
-NMI_kern.04_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.04_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8.kern04)
 NMI_kern.04_km.clus8
 ```
 
@@ -1407,15 +1408,15 @@ kern.04.km8.sm$mean_discordant
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern04 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern04$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern04 <- km.10.kern04$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern04)
 ```
 
 ###### **Visualization**
@@ -1447,7 +1448,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.04_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.04_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10.kern04)
 ARI_kern.04_km.clus10
 ```
 
@@ -1455,7 +1456,7 @@ ARI_kern.04_km.clus10
 
 ```{r}
 # library(randnet)
-NMI_kern.04_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.04_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10.kern04)
 NMI_kern.04_km.clus10
 ```
 
@@ -1477,11 +1478,11 @@ set.seed(123)
 k <- 40
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
-g_clus <- g_walk$membership
-table(g_clus)
+g_clus.kern04 <- g_walk$membership
+table(g_clus.kern04)
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(g_clus)
+colLabels(spe) <- factor(g_clus.kern04)
 ```
 
 ###### **Visualization**
@@ -1513,7 +1514,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.04_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.04_graph <- adjustedRandIndex(colData(spe)$ground_truth, g_clus.kern04)
 ARI_kern.04_graph
 ```
 
@@ -1521,7 +1522,7 @@ ARI_kern.04_graph
 
 ```{r}
 # library(randnet)
-NMI_kern.04_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.04_graph <- NMI(colData(spe)$ground_truth, g_clus.kern04)
 NMI_kern.04_graph
 ```
 
@@ -1657,23 +1658,24 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.7.kern05 <- kmeans(pcs, centers = 7)
 
-table(km.7$cluster)
+table(km.7.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus7.kern05 <- km.7.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus7.kern05)
 ```
+
 
 ###### **Visualization**
 
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km7 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.05_km7, xyplot_groundtruth, ncol=2)
 ```
@@ -1683,12 +1685,12 @@ gridExtra::grid.arrange(xyplot_kern.05_km7, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1697,7 +1699,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.05_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.05_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7.kern05)
 ARI_kern.05_km.clus7
 ```
 
@@ -1705,7 +1707,7 @@ ARI_kern.05_km.clus7
 
 ```{r}
 # library(randnet)
-NMI_kern.05_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.05_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7.kern05)
 NMI_kern.05_km.clus7
 ```
 
@@ -1726,15 +1728,15 @@ kern.05.km7.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern05 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern05 <- km.8.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern05)
 ```
 
 ###### **Visualization**
@@ -1742,7 +1744,7 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km8 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.05_km8, xyplot_groundtruth, ncol=2)
 ```
@@ -1752,12 +1754,12 @@ gridExtra::grid.arrange(xyplot_kern.05_km8, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1766,7 +1768,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.05_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.05_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8.kern05)
 ARI_kern.05_km.clus8
 ```
 
@@ -1774,7 +1776,7 @@ ARI_kern.05_km.clus8
 
 ```{r}
 # library(randnet)
-NMI_kern.05_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.05_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8.kern05)
 NMI_kern.05_km.clus8
 ```
 
@@ -1795,15 +1797,15 @@ kern.05.km8.sm$mean_discordant
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern05 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern05 <- km.10.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern05)
 ```
 
 ###### **Visualization**
@@ -1835,7 +1837,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.05_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.05_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10.kern05)
 ARI_kern.05_km.clus10
 ```
 
@@ -1843,7 +1845,7 @@ ARI_kern.05_km.clus10
 
 ```{r}
 # library(randnet)
-NMI_kern.05_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.05_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10.kern05)
 NMI_kern.05_km.clus10
 ```
 
@@ -1865,11 +1867,11 @@ set.seed(123)
 k <- 45
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
-g_clus <- g_walk$membership
-table(g_clus)
+g_clus.kern05 <- g_walk$membership
+table(g_clus.kern05)
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(g_clus)
+colLabels(spe) <- factor(g_clus.kern05)
 ```
 
 ###### **Visualization**
@@ -1901,7 +1903,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.05_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.05_graph <- adjustedRandIndex(colData(spe)$ground_truth, g_clus.kern05)
 ARI_kern.05_graph
 ```
 
@@ -1909,7 +1911,7 @@ ARI_kern.05_graph
 
 ```{r}
 # library(randnet)
-NMI_kern.05_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.05_graph <- NMI(colData(spe)$ground_truth, g_clus.kern05)
 NMI_kern.05_graph
 ```
 
@@ -2047,15 +2049,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.7 <- kmeans(pcs, centers = 7)
+km.7.kern1 <- kmeans(pcs, centers = 7)
 
-table(km.7$cluster)
+table(km.7.kern1$cluster)
 
 # kmeans cluster assignments
-km.clus7 <- km.7$cluster
+km.clus7.kern1 <- km.7.kern1$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus7)
+colLabels(spe) <- factor(km.clus7.kern1)
 ```
 
 ###### **Visualization**
@@ -2063,7 +2065,7 @@ colLabels(spe) <- factor(km.clus7)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km7 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.1_km7, xyplot_groundtruth, ncol=2)
 ```
@@ -2073,12 +2075,12 @@ gridExtra::grid.arrange(xyplot_kern.1_km7, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -2087,7 +2089,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.1_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7)
+ARI_kern.1_km.clus7 <- adjustedRandIndex(colData(spe)$ground_truth,km.clus7.kern1)
 ARI_kern.1_km.clus7
 ```
 
@@ -2095,7 +2097,7 @@ ARI_kern.1_km.clus7
 
 ```{r}
 # library(randnet)
-NMI_kern.1_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7)
+NMI_kern.1_km.clus7 <- NMI(colData(spe)$ground_truth,km.clus7.kern1)
 NMI_kern.1_km.clus7
 ```
 
@@ -2116,15 +2118,15 @@ kern.1.km7.sm$mean_discordant
 
 set.seed(123)
 
-km.8 <- kmeans(pcs, centers = 8)
+km.8.kern1 <- kmeans(pcs, centers = 8)
 
-table(km.8$cluster)
+table(km.8.kern1$cluster)
 
 # kmeans cluster assignments
-km.clus8 <- km.8$cluster
+km.clus8.kern1 <- km.8.kern1$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus8)
+colLabels(spe) <- factor(km.clus8.kern1)
 ```
 
 ###### **Visualization**
@@ -2132,7 +2134,7 @@ colLabels(spe) <- factor(km.clus8)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.1_km8 <- plotSpots(spe, annotate = "label", 
-          pal = "libd_layer_colors",
+          pal = "Okabe-Ito",
           point_size = 0.7)
 gridExtra::grid.arrange(xyplot_kern.1_km8, xyplot_groundtruth, ncol=2)
 ```
@@ -2142,12 +2144,12 @@ gridExtra::grid.arrange(xyplot_kern.1_km8, xyplot_groundtruth, ncol=2)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -2156,7 +2158,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.1_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8)
+ARI_kern.1_km.clus8 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus8.kern1)
 ARI_kern.1_km.clus8
 ```
 
@@ -2164,7 +2166,7 @@ ARI_kern.1_km.clus8
 
 ```{r}
 # library(randnet)
-NMI_kern.1_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8)
+NMI_kern.1_km.clus8 <- NMI(colData(spe)$ground_truth, km.clus8.kern1)
 NMI_kern.1_km.clus8
 ```
 
@@ -2185,15 +2187,15 @@ kern.1.km8.sm$mean_discordant
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern1 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern1$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern1 <- km.10.kern1$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern1)
 ```
 
 ###### **Visualization**
@@ -2225,7 +2227,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.1_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10)
+ARI_kern.1_km.clus10 <- adjustedRandIndex(colData(spe)$ground_truth, km.clus10.kern1)
 ARI_kern.1_km.clus10
 ```
 
@@ -2233,7 +2235,7 @@ ARI_kern.1_km.clus10
 
 ```{r}
 # library(randnet)
-NMI_kern.1_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10)
+NMI_kern.1_km.clus10 <- NMI(colData(spe)$ground_truth, km.clus10.kern1)
 NMI_kern.1_km.clus10
 ```
 
@@ -2255,11 +2257,11 @@ set.seed(123)
 k <- 45
 g <- buildSNNGraph(spe, k = k,  use.dimred = "PCA")
 g_walk <- igraph::cluster_walktrap(g)
-g_clus <- g_walk$membership
-table(g_clus)
+g_clus.kern1 <- g_walk$membership
+table(g_clus.kern1)
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(g_clus)
+colLabels(spe) <- factor(g_clus.kern1)
 ```
 
 ###### **Visualization**
@@ -2291,7 +2293,7 @@ plotDimRed(spe, plot_type = "UMAP",
 
 ```{r}
 # library(mclust)
-ARI_kern.1_graph <- adjustedRandIndex(colData(spe)$ground_truth, colData(spe)$label)
+ARI_kern.1_graph <- adjustedRandIndex(colData(spe)$ground_truth, g_clus.kern1)
 ARI_kern.1_graph
 ```
 
@@ -2299,7 +2301,7 @@ ARI_kern.1_graph
 
 ```{r}
 # library(randnet)
-NMI_kern.1_graph <- NMI(colData(spe)$ground_truth, colData(spe)$label)
+NMI_kern.1_graph <- NMI(colData(spe)$ground_truth, g_clus.kern1)
 NMI_kern.1_graph
 ```
 
@@ -2419,5 +2421,403 @@ SM_DLPFC[is.num] <- lapply(SM_DLPFC[is.num], round, 4)
 SM_DLPFC
 ```
 
+
+
+### Compositional Analysis
+
+```{r}
+library(reshape)
+```
+
+
+#### Uniform 
+
+##### 8 Smoothclust Clusters
+
+*10 Nonspatial clusters*
+```{r}
+length(km.clus8.uni)
+length(km.clus10.nonspac)
+
+# check cluster frequencies
+table(km.clus8.uni)
+table(km.clus10.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus8.uni))
+kmeans_labels <- sort(unique(km.clus10.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus8.uni)
+kmeans_clus <- as.factor(km.clus10.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_fill_manual(values=colors) +
+  scale_x_continuous(breaks=c(1:8)) +
+  theme_bw()
+```
+
+
+```{r}
+gridExtra::grid.arrange(
+  (xyplot_uni_km8 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km10 + labs(title="Non-spatial")),
+  ncol=2)
+```
+
+#### Kernel, 0.02
+
+*10 Nonspatial clusters*
+```{r}
+length(km.clus8.kern02)
+length(km.clus10.nonspac)
+
+# check cluster frequencies
+table(km.clus8.kern02)
+table(km.clus10.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus8.kern02))
+kmeans_labels <- sort(unique(km.clus10.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus8.kern02)
+kmeans_clus <- as.factor(km.clus10.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_fill_manual(values=colors) +
+  scale_x_continuous(breaks=c(1:8)) +
+  theme_bw()
+```
+
+
+```{r}
+gridExtra::grid.arrange(
+  (xyplot_kern.02_km8 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km10 + labs(title="Non-spatial")),
+  ncol=2)
+```
+
+#### Kernel, 0.04
+
+*10 Nonspatial clusters*
+```{r}
+length(km.clus8.kern04)
+length(km.clus10.nonspac)
+
+# check cluster frequencies
+table(km.clus8.kern04)
+table(km.clus10.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus8.kern04))
+kmeans_labels <- sort(unique(km.clus10.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus8.kern04)
+kmeans_clus <- as.factor(km.clus10.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_fill_manual(values=colors) +
+  scale_x_continuous(breaks=c(1:8)) +
+  theme_bw()
+```
+
+
+```{r}
+gridExtra::grid.arrange(
+  (xyplot_kern.04_km8 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km10 + labs(title="Non-spatial")),
+  ncol=2)
+```
+
+
+#### Kernel, 0.05
+
+*10 Nonspatial clusters*
+```{r}
+length(km.clus8.kern05)
+length(km.clus10.nonspac)
+
+# check cluster frequencies
+table(km.clus8.kern05)
+table(km.clus10.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus8.kern05))
+kmeans_labels <- sort(unique(km.clus10.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus8.kern05)
+kmeans_clus <- as.factor(km.clus10.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_fill_manual(values=colors) +
+  scale_x_continuous(breaks=c(1:8)) +
+  theme_bw()
+```
+
+
+```{r}
+gridExtra::grid.arrange(
+  (xyplot_kern.05_km8 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km10 + labs(title="Non-spatial")),
+  ncol=2)
+```
+
+
+
+#### Kernel, 0.1
+
+*10 Nonspatial clusters*
+```{r}
+length(km.clus8.kern1)
+length(km.clus10.nonspac)
+
+# check cluster frequencies
+table(km.clus8.kern1)
+table(km.clus10.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus8.kern1))
+kmeans_labels <- sort(unique(km.clus10.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus8.kern1)
+kmeans_clus <- as.factor(km.clus10.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_fill_manual(values=colors) +
+  scale_x_continuous(breaks=c(1:8)) +
+  theme_bw()
+```
+
+
+```{r}
+gridExtra::grid.arrange(
+  (xyplot_kern.1_km8 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km10 + labs(title="Non-spatial")),
+  ncol=2)
+```
 
 
