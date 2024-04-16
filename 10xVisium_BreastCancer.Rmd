@@ -27,6 +27,7 @@ library(R.utils)
 library(tibble)
 library(dplyr)
 library(RColorBrewer)
+library(reshape)
 ```
 
 
@@ -446,7 +447,7 @@ colLabels(spe) <- factor(km.clus3.uni)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km3 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=3,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_uni_km3
 ```
@@ -456,12 +457,12 @@ xyplot_uni_km3
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -497,7 +498,7 @@ colLabels(spe) <- factor(km.clus4.uni)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km4 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=4,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_uni_km4
 ```
@@ -507,12 +508,12 @@ xyplot_uni_km4
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -548,7 +549,7 @@ colLabels(spe) <- factor(km.clus6.uni)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km6 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=6,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_uni_km6
 ```
@@ -558,12 +559,12 @@ xyplot_uni_km6
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -599,7 +600,7 @@ colLabels(spe) <- factor(km.clus8.uni)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_uni_km8 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=8,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_uni_km8
 ```
@@ -609,12 +610,12 @@ xyplot_uni_km8
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -643,7 +644,7 @@ SMs_uni_df
 ________________________________________________________________________
 
 
-### Method: Kernel, bandwidth= 0.02
+### Method: Kernel, bandwidth = 0.02
 
 ```{r, include = FALSE}
 # library(smoothclust)
@@ -717,7 +718,7 @@ colLabels(spe) <- factor(km.clus3.kern02)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km3 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=3,name="Dark2"),
+          pal = "Okabe-Ito", 
           point_size = 0.7)
 xyplot_kern.02_km3
 ```
@@ -726,12 +727,12 @@ xyplot_kern.02_km3
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -767,7 +768,7 @@ colLabels(spe) <- factor(km.clus4.kern02)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km4 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=4,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_kern.02_km4
 ```
@@ -776,12 +777,12 @@ xyplot_kern.02_km4
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -816,7 +817,7 @@ colLabels(spe) <- factor(km.clus6.kern02)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km6 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=6,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_kern.02_km6
 ```
@@ -825,12 +826,12 @@ xyplot_kern.02_km6
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -841,6 +842,16 @@ kern.02.km6.sm <- smoothness_metric(spatial_coords = spatialCoords(spe), labels 
 
 kern.02.km6.sm$mean_discordant
 ```
+
+*X-Y  Spatial Plot - SM*
+```{r}
+colData(spe)$SM <- kern.02.km6.sm$n_discordant
+plotSpots(spe, annotate = "SM", 
+          pal = c("gray", "red"),
+          point_size = 1)
+```
+
+
 
 
 
@@ -866,7 +877,7 @@ colLabels(spe) <- factor(km.clus8.kern02)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.02_km8 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=8,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_kern.02_km8
 ```
@@ -875,12 +886,12 @@ xyplot_kern.02_km8
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -983,7 +994,7 @@ colLabels(spe) <- factor(km.clus3.kern05)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km3 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=3,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_kern.05_km3
 ```
@@ -992,12 +1003,12 @@ xyplot_kern.05_km3
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),,
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),,
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1033,7 +1044,7 @@ colLabels(spe) <- factor(km.clus4.kern05)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km4 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=4,name="Dark2"),,
+          pal = "Okabe-Ito",
           point_size = 0.9)
 xyplot_kern.05_km4
 ```
@@ -1042,12 +1053,12 @@ xyplot_kern.05_km4
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1083,7 +1094,7 @@ colLabels(spe) <- factor(km.clus6.kern05)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km6 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=6,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.9)
 xyplot_kern.05_km6
 ```
@@ -1092,12 +1103,12 @@ xyplot_kern.05_km6
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1133,7 +1144,7 @@ colLabels(spe) <- factor(km.clus8.kern05)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.05_km8 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=8,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.7)
 xyplot_kern.05_km8
 ```
@@ -1142,12 +1153,12 @@ xyplot_kern.05_km8
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1250,7 +1261,7 @@ colLabels(spe) <- factor(km.clus3.kern08)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.08_km3 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=3,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.9)
 xyplot_kern.08_km3
 ```
@@ -1259,12 +1270,12 @@ xyplot_kern.08_km3
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=3,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1300,7 +1311,7 @@ colLabels(spe) <- factor(km.clus4.kern08)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.08_km4 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=4,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.9)
 xyplot_kern.08_km4
 ```
@@ -1309,12 +1320,12 @@ xyplot_kern.08_km4
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=4,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1350,7 +1361,7 @@ colLabels(spe) <- factor(km.clus6.kern08)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.08_km6 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=6,name="Dark2"),
+          pal = "Okabe-Ito",
           point_size = 0.9)
 xyplot_kern.08_km6
 ```
@@ -1359,12 +1370,12 @@ xyplot_kern.08_km6
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=6,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1400,7 +1411,7 @@ colLabels(spe) <- factor(km.clus8.kern08)
 ```{r}
 # plot clusters in spatial x-y coordinates
 xyplot_kern.08_km8 <- plotSpots(spe, annotate = "label", 
-          pal = brewer.pal(n=8,name="Dark2"),
+          pal = ,
           point_size = 0.7)
 xyplot_kern.08_km8
 ```
@@ -1409,12 +1420,12 @@ xyplot_kern.08_km8
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = brewer.pal(n=8,name="Dark2"),
+           annotate = "label", pal = "Okabe-Ito",
            point_size = 0.7)
 ```
 
@@ -1467,7 +1478,9 @@ library(reshape)
 ```
 
 
-#### Uniform 6 Clusters
+#### Uniform 
+
+##### 6 Smoothclust Clusters
 
 *8 Nonspatial clusters*
 ```{r}
@@ -1530,7 +1543,7 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
   geom_bar(stat="identity") +
   labs(y="Proportion of Nonspatial Cluster", 
        x="Smoothclust Cluster",
-       title = "Proportion of nonspatital k means cluster spots within a smoothclust region") +
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
   scale_fill_manual(values=c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", 
         "#FFD700", "#FF7F00", "#1A1A1A", "#666666")) +
   scale_x_continuous(breaks=c(1:6)) +
@@ -1540,11 +1553,89 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
 
 ```{r}
 gridExtra::grid.arrange(
-  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   (xyplot_uni_km6 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   ncol=2)
 ```
 
+
+##### 4 Smoothclust Clusters
+
+*8 Nonspatial clusters*
+```{r}
+length(km.clus4.uni)
+length(km.clus8.nonspac)
+
+# check cluster frequencies
+table(km.clus4.uni)
+table(km.clus8.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus4.uni))
+kmeans_labels <- sort(unique(km.clus8.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus4.uni)
+kmeans_clus <- as.factor(km.clus8.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+res
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+df
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_fill_manual(values=c("#F0027F", "#377EB8", "#4DAF4A", "#984EA3", 
+        "#FFD700", "#FF7F00", "#1A1A1A", "#666666")) +
+  scale_x_continuous(breaks=c(1:6)) +
+  theme_bw()
+```
+
+
+```{r}
+gridExtra::grid.arrange(
+  (xyplot_uni_km4 + labs(title="Spatial - uniform")),
+  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
+  ncol=2)
+```
 
 
 _____________________________________________________________________
@@ -1625,8 +1716,8 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
 
 ```{r}
 gridExtra::grid.arrange(
-  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   (xyplot_kern.02_km6 + labs(title="Spatial - kernel (0.02)")),
+  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   ncol=2)
 ```
 
@@ -1705,8 +1796,8 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
 
 ```{r}
 gridExtra::grid.arrange(
-  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   (xyplot_kern.05_km6 + labs(title="Spatial - kernel (0.05)")),
+  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   ncol=2)
 ```
 
@@ -1784,8 +1875,8 @@ ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
 
 ```{r}
 gridExtra::grid.arrange(
-  xyplot_nonspac_km8,
-  xyplot_kern.08_km6,
+  (xyplot_kern.08_km6 + labs(title="Spatial - kernel (0.08)")),
+  (xyplot_nonspac_km8 + labs(title="Non-spatial")),
   ncol=2)
 ```
 
