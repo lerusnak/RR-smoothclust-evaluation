@@ -26,6 +26,13 @@ library(randnet)
 library(R.utils)
 library(tibble)
 library(dplyr)
+library(pals)
+library(reshape)
+```
+
+Palette
+```{r}
+pal1 <- as.vector(alphabet(n=20))
 ```
 
 
@@ -36,7 +43,7 @@ library(dplyr)
 # Create molecule experiment object
 setwd("C:/Users/lerus/OneDrive/Documents/BU-AB/ResearchRotation")
 baseDir <- getwd()
-dataDir <- file.path(baseDir,"10xXeniumData")
+dataDir <- file.path(baseDir,"10xXenium")
 
 me <- readXenium(dataDir, keepCols = "essential") # takes about 3 minutes
 me
@@ -84,15 +91,15 @@ pcs <- reducedDim(spe, "PCA")
 
 set.seed(123)
 
-km.5 <- kmeans(pcs, centers = 5)
+km.5.nonspac <- kmeans(pcs, centers = 5)
 
-table(km.5$cluster)
+table(km.5.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus5 <- km.5$cluster
+km.clus5.nonspac <- km.5.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus5)
+colLabels(spe) <- factor(km.clus5.nonspac)
 ```
 
 *X-Y  Spatial Plot*
@@ -102,10 +109,11 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac_km5 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.2, size=0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_nonspac_km5 
 ```
 
 
@@ -140,15 +148,15 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.nonspac <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.nonspac <- km.10.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.nonspac)
 ```
 
 *X-Y  Spatial Plot*
@@ -158,10 +166,11 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac_km10 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.2, size = 0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_nonspac_km10
 ```
 
 
@@ -196,15 +205,15 @@ ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = SM)) +
 
 set.seed(123)
 
-km.15 <- kmeans(pcs, centers = 15)
+km.15.nonspac <- kmeans(pcs, centers = 15)
 
-table(km.15$cluster)
+table(km.15.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus15 <- km.15$cluster
+km.clus15.nonspac <- km.15.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus15)
+colLabels(spe) <- factor(km.clus15.nonspac)
 ```
 
 *X-Y  Spatial Plot*
@@ -214,10 +223,11 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac_km15 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.2, size = 0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_nonspac_km15
 ```
 
 
@@ -235,15 +245,15 @@ nonspac.km15.sm$mean_discordant
 ```{r}
 set.seed(123)
 
-km.20 <- kmeans(pcs, centers = 20)
+km.20.nonspac <- kmeans(pcs, centers = 20)
 
-table(km.20$cluster)
+table(km.20.nonspac$cluster)
 
 # kmeans cluster assignments
-km.clus20 <- km.20$cluster
+km.clus20.nonspac <- km.20.nonspac$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus20)
+colLabels(spe) <- factor(km.clus20.nonspac)
 ```
 
 *X-Y  Spatial Plot*
@@ -253,10 +263,11 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac_km20 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.2, size = 0.1) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_nonspac_km20
 ```
 
 
@@ -343,15 +354,15 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 set.seed(123)
 
-km.5 <- kmeans(pcs, centers = 5)
+km.5.uni <- kmeans(pcs, centers = 5)
 
-table(km.5$cluster)
+table(km.5.uni$cluster)
 
 # kmeans cluster assignments
-km.clus5 <- km.5$cluster
+km.clus5.uni <- km.5.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus5)
+colLabels(spe) <- factor(km.clus5.uni)
 ```
 
 ####### **Visualization**
@@ -360,12 +371,12 @@ colLabels(spe) <- factor(km.clus5)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -377,10 +388,12 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.2, size=0.1) +
+xyplot_uni_km5 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size=0.3) +
   theme_bw() +
+  scale_color_manual(values = pal1) +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_uni_km5
 ```
 
 
@@ -401,33 +414,30 @@ ________________________________________________________________________
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.uni <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.uni$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.uni <- km.10.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.uni)
 ```
 
 ####### **Visualization**
 
-```{r}
-colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
-```
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -438,10 +448,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.2, size = 0.1) +
+xyplot_uni_km10 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.3, size = 0.3) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_uni_km10
 ```
 
 
@@ -477,15 +490,15 @@ _____________________________________________________________________
 
 set.seed(123)
 
-km.15 <- kmeans(pcs, centers = 15)
+km.15.uni <- kmeans(pcs, centers = 15)
 
-table(km.15$cluster)
+table(km.15.uni$cluster)
 
 # kmeans cluster assignments
-km.clus15 <- km.15$cluster
+km.clus15.uni <- km.15.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus15)
+colLabels(spe) <- factor(km.clus15.uni)
 ```
 
 ####### **Visualization**
@@ -497,10 +510,12 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_uni_km15 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.2, size=0.1) +
   theme_bw() +
+  scale_color_manual(values = pal1) +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_uni_km15
 ```
 
 
@@ -522,15 +537,15 @@ ________________________________________________________________________
 
 set.seed(123)
 
-km.20 <- kmeans(pcs, centers = 20)
+km.20.uni <- kmeans(pcs, centers = 20)
 
-table(km.20$cluster)
+table(km.20.uni$cluster)
 
 # kmeans cluster assignments
-km.clus20 <- km.20$cluster
+km.clus20.uni <- km.20.uni$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus20)
+colLabels(spe) <- factor(km.clus20.uni)
 ```
 
 
@@ -543,10 +558,12 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_uni_km20 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.2, size = 0.1) +
   theme_bw() +
+  scale_color_manual(values = pal1) +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_uni_km20
 ```
 
 
@@ -597,7 +614,7 @@ dim(spe_sub)
 ##### Normalization
 
 ```{r}
-spe <- logNormCounts(spe_sub, assay.type = "counts_smooth") 
+spe <- logNormCounts(spe_sub) 
 spe
 ```
 
@@ -659,15 +676,15 @@ sub.graph.sm$mean_discordant
 
 set.seed(123)
 
-km.5 <- kmeans(pcs, centers = 5)
+km.5.nonspac_sub <- kmeans(pcs, centers = 5)
 
-table(km.5$cluster)
+table(km.5.nonspac_sub$cluster)
 
 # kmeans cluster assignments
-km.clus5 <- km.5$cluster
+km.clus5.nonspac_sub <- km.5.nonspac_sub$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus5)
+colLabels(spe) <- factor(km.clus5.nonspac_sub)
 ```
 
 *X-Y  Spatial Plot*
@@ -677,10 +694,12 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac.sub_km5 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_nonspac.sub_km5
 ```
 
 
@@ -715,15 +734,15 @@ __________________________________________________
 ```{r}
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.nonspac_sub <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.nonspac_sub$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.nonspac_sub <- km.10.nonspac_sub$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.nonspac_sub)
 ```
 
 *X-Y  Spatial Plot*
@@ -733,10 +752,11 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac.sub_km10 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size = 0.7) +
   theme_bw() +
   theme(axis.text = element_blank(), axis.title = element_blank())
+xyplot_nonspac.sub_km10
 ```
 
 
@@ -773,15 +793,15 @@ _____________________________________________________________
 
 set.seed(123)
 
-km.15 <- kmeans(pcs, centers = 15)
+km.15.nonspac_sub <- kmeans(pcs, centers = 15)
 
-table(km.15$cluster)
+table(km.15.nonspac_sub$cluster)
 
 # kmeans cluster assignments
-km.clus15 <- km.15$cluster
+km.clus15.nonspac_sub <- km.15.nonspac_sub$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus15)
+colLabels(spe) <- factor(km.clus15.nonspac_sub)
 ```
 
 *X-Y  Spatial Plot*
@@ -791,10 +811,12 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac.sub_km15 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_nonspac.sub_km15
 ```
 
 
@@ -814,15 +836,15 @@ __________________________________________________________
 ```{r}
 set.seed(123)
 
-km.20 <- kmeans(pcs, centers = 20)
+km.20.nonspac_sub <- kmeans(pcs, centers = 20)
 
-table(km.20$cluster)
+table(km.20.nonspac_sub$cluster)
 
 # kmeans cluster assignments
-km.clus20 <- km.20$cluster
+km.clus20.nonspac_sub <- km.20.nonspac_sub$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus20)
+colLabels(spe) <- factor(km.clus20.nonspac_sub)
 ```
 
 *X-Y  Spatial Plot*
@@ -832,10 +854,12 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_nonspac.sub_km20 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_nonspac.sub_km20
 ```
 
 
@@ -883,9 +907,6 @@ spe <- smoothclust(spe_sub, method = "kernel", bandwidth = 0.02)
 assayNames(spe)
 ```
 
-```{r}
-summary(counts(spe)[1:8765823])
-```
 
 
 ##### Normalization
@@ -934,15 +955,15 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 set.seed(123)
 
-km.5 <- kmeans(pcs, centers = 5)
+km.5.kern02 <- kmeans(pcs, centers = 5)
 
-table(km.5$cluster)
+table(km.5.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus5 <- km.5$cluster
+km.clus5.kern02 <- km.5.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus5)
+colLabels(spe) <- factor(km.clus5.kern02)
 ```
 
 ####### **Visualization**
@@ -951,12 +972,12 @@ colLabels(spe) <- factor(km.clus5)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -968,10 +989,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern02_km5 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.8) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern02_km5 
 ```
 
 
@@ -1009,33 +1033,29 @@ __________________________________________________________________
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern02 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern02 <- km.10.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern02)
 ```
 
 ####### **Visualization**
-
-```{r}
-colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
-```
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -1046,10 +1066,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern02_km10 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size = 0.8) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern02_km10
 ```
 
 
@@ -1070,15 +1093,15 @@ _____________________________________________________________
 
 set.seed(123)
 
-km.15 <- kmeans(pcs, centers = 15)
+km.15.kern02 <- kmeans(pcs, centers = 15)
 
-table(km.15$cluster)
+table(km.15.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus15 <- km.15$cluster
+km.clus15.kern02 <- km.15.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus15)
+colLabels(spe) <- factor(km.clus15.kern02)
 ```
 
 *X-Y  Spatial Plot*
@@ -1088,10 +1111,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern02_km15 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values= pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern02_km15
 ```
 
 
@@ -1112,15 +1138,15 @@ __________________________________________________________
 
 set.seed(123)
 
-km.20 <- kmeans(pcs, centers = 20)
+km.20.kern02 <- kmeans(pcs, centers = 20)
 
-table(km.20$cluster)
+table(km.20.kern02$cluster)
 
 # kmeans cluster assignments
-km.clus20 <- km.20$cluster
+km.clus20.kern02 <- km.20.kern02$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus20)
+colLabels(spe) <- factor(km.clus20.kern02)
 ```
 
 *X-Y  Spatial Plot*
@@ -1130,10 +1156,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
-  geom_point(alpha = 0.3, size=0.7) +
+xyplot_kern02_km20 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+  geom_point(alpha = 0.5, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) + 
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern02_km20
 ```
 
 
@@ -1225,15 +1254,15 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 set.seed(123)
 
-km.5 <- kmeans(pcs, centers = 5)
+km.5.kern05 <- kmeans(pcs, centers = 5)
 
-table(km.5$cluster)
+table(km.5.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus5 <- km.5$cluster
+km.clus5.kern05 <- km.5.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus5)
+colLabels(spe) <- factor(km.clus5.kern05)
 ```
 
 ####### **Visualization**
@@ -1242,12 +1271,12 @@ colLabels(spe) <- factor(km.clus5)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -1259,10 +1288,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern05_km5 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.8) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern05_km5
 ```
 
 
@@ -1286,33 +1318,29 @@ ________________________________________________________________
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern05 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern05 <- km.10.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern05)
 ```
 
 ####### **Visualization**
-
-```{r}
-colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
-```
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -1323,10 +1351,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern05_km10 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size = 0.8) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern05_km10
 ```
 
 
@@ -1365,15 +1396,15 @@ _____________________________________________________________
 
 set.seed(123)
 
-km.15 <- kmeans(pcs, centers = 15)
+km.15.kern05 <- kmeans(pcs, centers = 15)
 
-table(km.15$cluster)
+table(km.15.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus15 <- km.15$cluster
+km.clus15.kern05 <- km.15.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus15)
+colLabels(spe) <- factor(km.clus15.kern05)
 ```
 
 *X-Y  Spatial Plot*
@@ -1383,10 +1414,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern05_km15 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern05_km15
 ```
 
 
@@ -1408,15 +1442,15 @@ __________________________________________________________
 
 set.seed(123)
 
-km.20 <- kmeans(pcs, centers = 20)
+km.20.kern05 <- kmeans(pcs, centers = 20)
 
-table(km.20$cluster)
+table(km.20.kern05$cluster)
 
 # kmeans cluster assignments
-km.clus20 <- km.20$cluster
+km.clus20.kern05 <- km.20.kern05$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus20)
+colLabels(spe) <- factor(km.clus20.kern05)
 ```
 
 *X-Y  Spatial Plot*
@@ -1426,10 +1460,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern05_km20 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern05_km20
 ```
 
 
@@ -1520,15 +1557,15 @@ colnames(reducedDim(spe, "UMAP")) <- paste0("UMAP", 1:2)
 
 set.seed(123)
 
-km.5 <- kmeans(pcs, centers = 5)
+km.5.kern08 <- kmeans(pcs, centers = 5)
 
-table(km.5$cluster)
+table(km.5.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus5 <- km.5$cluster
+km.clus5.kern08 <- km.5.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus5)
+colLabels(spe) <- factor(km.clus5.kern08)
 ```
 
 ####### **Visualization**
@@ -1537,12 +1574,12 @@ colLabels(spe) <- factor(km.clus5)
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = "libd_layer_colors",
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -1554,10 +1591,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern08_km5 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.8) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern08_km5
 ```
 
 
@@ -1579,33 +1619,29 @@ ________________________________________________________________________
 
 set.seed(123)
 
-km.10 <- kmeans(pcs, centers = 10)
+km.10.kern08 <- kmeans(pcs, centers = 10)
 
-table(km.10$cluster)
+table(km.10.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus10 <- km.10$cluster
+km.clus10.kern08 <- km.10.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus10)
+colLabels(spe) <- factor(km.clus10.kern08)
 ```
 
 ####### **Visualization**
-
-```{r}
-colors <- c("red4", "orangered", "orange", "gold", "seagreen", "turquoise", "dodgerblue", "mediumblue", "lightslateblue", "magenta3", "deeppink")
-```
 
 *Reduced Dimensionality Cluster Visualization*
 ```{r}
 # plot clusters in PCA reduced dimensions
 plotDimRed(spe, plot_type = "PCA", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 
 # plot clusters in UMAP reduced dimensions
 plotDimRed(spe, plot_type = "UMAP", 
-           annotate = "label", pal = colors,
+           annotate = "label", pal = pal1,
            point_size = 0.5)
 ```
 
@@ -1616,10 +1652,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern08_km10 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size = 0.8) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern08_km10
 ```
 
 
@@ -1643,15 +1682,15 @@ _____________________________________________________________
 
 set.seed(123)
 
-km.15 <- kmeans(pcs, centers = 15)
+km.15.kern08 <- kmeans(pcs, centers = 15)
 
-table(km.15$cluster)
+table(km.15.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus15 <- km.15$cluster
+km.clus15.kern08 <- km.15.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus15)
+colLabels(spe) <- factor(km.clus15.kern08)
 ```
 
 *X-Y  Spatial Plot*
@@ -1661,10 +1700,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern08_km15 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern08_km15
 ```
 
 
@@ -1686,15 +1728,15 @@ __________________________________________________________
 
 set.seed(123)
 
-km.20 <- kmeans(pcs, centers = 20)
+km.20.kern08 <- kmeans(pcs, centers = 20)
 
-table(km.20$cluster)
+table(km.20.kern08$cluster)
 
 # kmeans cluster assignments
-km.clus20 <- km.20$cluster
+km.clus20.kern08 <- km.20.kern08$cluster
 
 # store cluster label in column 'label' in colData
-colLabels(spe) <- factor(km.clus20)
+colLabels(spe) <- factor(km.clus20.kern08)
 ```
 
 *X-Y  Spatial Plot*
@@ -1704,10 +1746,13 @@ coldat_df <- as.data.frame(colData(spe))
 coldat_df <- coldat_df %>%
   mutate(y_reverse = -1*y_location)
 
-ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
+xyplot_kern08_km20 <- ggplot(coldat_df, aes(x = x_location, y = y_reverse, color = label)) +
   geom_point(alpha = 0.3, size=0.7) +
   theme_bw() +
-  theme(axis.text = element_blank(), axis.title = element_blank())
+  scale_color_manual(values = pal1) +
+  theme(axis.text = element_blank(), axis.title = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+xyplot_kern08_km20
 ```
 
 
@@ -1757,5 +1802,313 @@ SM_mousebrain[is.num] <- lapply(SM_mousebrain[is.num], round, 4)
 
 SM_mousebrain
 ```
+
+
+## Compostional Analysis
+
+#### Uniform
+
+*10 Nonspatial clusters on 10 Spatial Clusters*
+```{r}
+length(km.clus10.uni)
+length(km.clus10.nonspac)
+
+# check cluster frequencies
+table(km.clus10.uni)
+table(km.clus10.nonspac)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus10.uni))
+kmeans_labels <- sort(unique(km.clus10.nonspac))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus10.uni)
+kmeans_clus <- as.factor(km.clus10.nonspac)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_x_continuous(breaks=c(1:10)) +
+  theme_bw()
+```
+
+
+```{r}
+xyplot_uni_km10 + labs(title="Spatial - uniform")
+```
+
+```{r}
+xyplot_nonspac_km10 + labs(title="Non-spatial")
+```
+
+
+#### Kernel, 0.02
+
+*10 Nonspatial clusters on 10 Spatial Clusters*
+```{r}
+length(km.clus10.kern02)
+length(km.clus10.nonspac_sub)
+
+# check cluster frequencies
+table(km.clus10.kern02)
+table(km.clus10.nonspac_sub)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus10.kern02))
+kmeans_labels <- sort(unique(km.clus10.nonspac_sub))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus10.kern02)
+kmeans_clus <- as.factor(km.clus10.nonspac_sub)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_x_continuous(breaks=c(1:10)) +
+  theme_bw()
+```
+
+
+```{r}
+xyplot_kern02_km10 + labs(title="Spatial - kernel (0.02)")  + guides(color = guide_legend(override.aes = list(size = 2, alpha=0.5)))
+xyplot_nonspac.sub_km10 + labs(title="Non-spatial") + guides(color = guide_legend(override.aes = list(size = 2, alpha=0.5)))
+```
+
+________________________________________________________________________
+
+
+#### Kernel, 0.05
+
+*10 Nonspatial clusters on 10 Spatial Clusters*
+```{r}
+length(km.clus10.kern05)
+length(km.clus10.nonspac_sub)
+
+# check cluster frequencies
+table(km.clus10.kern05)
+table(km.clus10.nonspac_sub)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus10.kern05))
+kmeans_labels <- sort(unique(km.clus10.nonspac_sub))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus10.kern05)
+kmeans_clus <- as.factor(km.clus10.nonspac_sub)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_x_continuous(breaks=c(1:10)) +
+  theme_bw()
+```
+
+
+```{r}
+xyplot_kern05_km10 + labs(title="Spatial - kernel (0.05)") + guides(color = guide_legend(override.aes = list(size = 2, alpha=0.5)))
+xyplot_nonspac.sub_km10 + labs(title="Non-spatial") + guides(color = guide_legend(override.aes = list(size = 2, alpha=0.5)))
+```
+
+
+_____________________________________________________________
+
+
+#### Kernel, 0.08
+
+*10 Nonspatial clusters on 10 Spatial Clusters*
+```{r}
+length(km.clus10.kern08)
+length(km.clus10.nonspac_sub)
+
+# check cluster frequencies
+table(km.clus10.kern08)
+table(km.clus10.nonspac_sub)
+```
+
+
+```{r}
+# get cluster labels
+smoothclust_labels <- sort(unique(km.clus10.kern08))
+kmeans_labels <- sort(unique(km.clus10.nonspac_sub))
+
+smoothclust_labels
+kmeans_labels
+```
+
+
+```{r}
+# create empty matrix to store results
+res <- matrix(
+  NA, 
+  nrow = length(smoothclust_labels), 
+  ncol = length(kmeans_labels)
+)
+
+rownames(res) <- paste0("smoothclust_", smoothclust_labels)
+colnames(res) <- paste0("kmeans_", kmeans_labels)
+
+# convert vectors of cluster labels to factors so empty levels are not dropped when subsetting
+smoothclust_clus <- as.factor(km.clus10.kern05)
+kmeans_clus <- as.factor(km.clus10.nonspac_sub)
+
+# calculate by row (i.e. for each smoothclust domain)
+for (i in 1:nrow(res)) {
+  # subset k-means cluster labels for points in smoothclust domain i
+  kmeans_sub <- kmeans_clus[smoothclust_clus == smoothclust_labels[i]]
+  # calculate frequency table
+  kmeans_sub_tbl <- table(kmeans_sub)
+  # convert frequency table to proportions and store in matrix
+  res[i, ] <- kmeans_sub_tbl / sum(kmeans_sub_tbl)
+}
+
+rowSums(res)
+```
+
+```{r}
+df <- melt(cbind(smoothclust_labels, as.data.frame(res)), id.vars = "smoothclust_labels")
+```
+
+
+```{r}
+# then create stacked bar plot
+ggplot(df, aes(x=smoothclust_labels, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  labs(y="Proportion of Nonspatial Cluster", 
+       x="Smoothclust Cluster",
+       title = "Proportion of nonspatital k means cluster spots \nwithin a smoothclust region") +
+  scale_x_continuous(breaks=c(1:10)) +
+  theme_bw()
+```
+
+
+```{r}
+xyplot_kern08_km10 + labs(title="Spatial - kernel (0.08)") + guides(color = guide_legend(override.aes = list(size = 2, alpha=0.5)))
+xyplot_nonspac.sub_km10 + labs(title="Non-spatial") + guides(color = guide_legend(override.aes = list(size = 2, alpha=0.5)))
+```
+
+
 
 
